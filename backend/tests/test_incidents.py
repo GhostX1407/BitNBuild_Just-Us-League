@@ -268,3 +268,129 @@ async def test_duplicate_detection(client: AsyncClient):
     assert dup_incident["is_duplicate"] is True
     assert dup_incident["duplicate_of_id"] == orig_incident["id"]
 
+
+# ── Phase 3 Tests — Notification System ──────────────────────────────────────
+
+async def test_notification_triggered_for_high_severity(client: AsyncClient):
+    """
+    Test 1 — High-severity incident triggers dispatch_alert exactly once.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    with patch(
+        "app.services.notification_service.dispatch_alert",
+        new_callable=AsyncMock,
+    ) as mock_dispatch:
+        payload = {
+            "title": "Major building collapse",
+            "description": "People trapped under debris. Building collapse.",
+            "latitude": 28.6139,
+            "longitude": 77.2090,
+            "category": "Other",
+        }
+        response = await client.post("/api/incidents", json=payload)
+        assert response.status_code == 201
+        data = response.json()
+        assert data["severity"] == "High"
+        assert data["is_duplicate"] is False
+
+    # BackgroundTasks execute synchronously in the HTTPX test client
+    mock_dispatch.assert_awaited_once()
+
+
+async def test_notification_not_triggered_for_low_medium_severity(client: AsyncClient):
+    """
+    Test 2 — Low/Medium incidents must NOT trigger a notification.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    with patch(
+        "app.services.notification_service.dispatch_alert",
+        new_callable=AsyncMock,
+    ) as mock_dispatch:
+        payload = {
+            "title": "Minor road blockage",
+            "description": "A small pothole causing minor traffic disruption.",
+            "latitude": 28.6140,
+            "longitude": 77.2091,
+            "category": "Other",
+        }
+        response = await client.post("/api/incidents", json=payload)
+        assert response.status_code == 201
+        data = response.json()
+        assert data["severity"] == "Low"
+
+    mock_dispatch.assert_not_awaited()
+
+
+async def test_notification_not_triggered_for_duplicate(client: AsyncClient):
+    """
+    Test 3 — Duplicate High-severity report must NOT send a second alert.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    # Create the original (should trigger one notification)
+    original_payload = {
+        "title": "Gas pipeline explosion",
+        "description": "Massive explosion near the gas pipeline. People trapped.",
+        "latitude": 19.0760,
+        "longitude": 72.8777,
+        "category": "Other",
+    }
+    res1 = await client.post("/api/incidents", json=original_payload)
+    assert res1.status_code == 201
+    assert res1.json()["is_duplicate"] is False
+
+    # Now submit a near-identical duplicate and assert no second alert
+    with patch(
+        "app.services.notification_service.dispatch_alert",
+        new_callable=AsyncMock,
+    ) as mock_dispatch:
+        duplicate_payload = {
+            "title": "Gas pipeline blast",
+            "description": "Huge explosion near the gas pipeline. People trapped under rubble.",
+            "latitude": 19.0761,  # ~11 m away
+            "longitude": 72.8777,
+            "category": "Other",
+        }
+        res2 = await client.post("/api/incidents", json=duplicate_payload)
+        assert res2.status_code == 201
+        dup_data = res2.json()
+        assert dup_data["is_duplicate"] is True
+
+    # Duplicate → no alert should have fired
+    mock_dispatch.assert_not_awaited()
+
+
+async def test_notification_failure_does_not_break_incident_creation(client: AsyncClient):
+    """
+    Test 4 — If the internal dispatcher raises an exception, dispatch_alert
+    catches it, the incident is still saved, and the API returns 201.
+
+    We patch `_mock_dispatch` (the inner function) so that dispatch_alert's
+    own try/except swallows the error — mirroring real production behaviour
+    where a downstream SMS gateway might fail.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    async def _boom(incident):
+        raise RuntimeError("Simulated notification failure")
+
+    with patch(
+        "app.services.notification_service._mock_dispatch",
+        side_effect=_boom,
+    ):
+        payload = {
+            "title": "Catastrophic flood",
+            "description": "Rapidly spreading flood trapping residents in buildings.",
+            "latitude": 22.5726,
+            "longitude": 88.3639,
+            "category": "Flood",
+        }
+        response = await client.post("/api/incidents", json=payload)
+
+    # Incident must be saved even though the internal dispatcher exploded
+    assert response.status_code == 201
+    data = response.json()
+    assert data["id"] is not None
+    assert data["severity"] == "High"

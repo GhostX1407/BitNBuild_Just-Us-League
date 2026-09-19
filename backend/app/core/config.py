@@ -65,6 +65,49 @@ class Settings(BaseSettings):
             raise ValueError(f"DEFAULT_SEVERITY must be one of {allowed}")
         return v
 
+    # ── Phase 3: Notification settings ───────────────────────────────────────
+    # Master switch — set to false to silence all notifications globally.
+    NOTIFICATION_ENABLED: bool = True
+
+    # Comma-separated list of severity levels that trigger an alert.
+    # Default: only High incidents page responders.
+    NOTIFY_ON_SEVERITIES: str = "High"
+
+    # Comma-separated list of emergency responder groups to include in alerts.
+    EMERGENCY_HANDLERS: str = "Police,Fire Department,Medical Response"
+
+    @property
+    def notify_severities_list(self) -> List[str]:
+        """Return severities that trigger notifications as a list."""
+        return [s.strip() for s in self.NOTIFY_ON_SEVERITIES.split(",") if s.strip()]
+
+    @property
+    def emergency_handlers_list(self) -> List[str]:
+        """Return emergency handler names as a list."""
+        return [h.strip() for h in self.EMERGENCY_HANDLERS.split(",") if h.strip()]
+
+    # ── Phase 3: Twilio (optional — leave blank to use mock dispatcher) ───────
+    # To enable real SMS, set all four variables and install: pip install twilio
+    TWILIO_ACCOUNT_SID: str = ""
+    TWILIO_AUTH_TOKEN: str = ""
+    TWILIO_FROM_NUMBER: str = ""   # E.164 format, e.g. +15005550006
+    TWILIO_TO_NUMBERS: str = ""    # Comma-separated E.164 numbers to notify
+
+    @property
+    def twilio_enabled(self) -> bool:
+        """True only when all required Twilio credentials are configured."""
+        return bool(
+            self.TWILIO_ACCOUNT_SID
+            and self.TWILIO_AUTH_TOKEN
+            and self.TWILIO_FROM_NUMBER
+            and self.TWILIO_TO_NUMBERS
+        )
+
+    @property
+    def twilio_to_numbers_list(self) -> List[str]:
+        """Return Twilio destination numbers as a list."""
+        return [n.strip() for n in self.TWILIO_TO_NUMBERS.split(",") if n.strip()]
+
 
 # Module-level singleton — import this everywhere
 settings = Settings()

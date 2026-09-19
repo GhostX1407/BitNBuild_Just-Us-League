@@ -21,9 +21,10 @@ from __future__ import annotations
 import math
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.database.connection import get_db
 from app.schemas.incident import (
     IncidentCreate,
@@ -32,7 +33,7 @@ from app.schemas.incident import (
     IncidentResponse,
     IncidentStatusUpdate,
 )
-from app.services import incident_service
+from app.services import incident_service, notification_service
 
 router = APIRouter(prefix="/api/incidents", tags=["Incidents"])
 
@@ -46,12 +47,13 @@ router = APIRouter(prefix="/api/incidents", tags=["Incidents"])
     summary="Report a new incident",
     description=(
         "Create a new emergency incident report. "
-        "If `severity` is omitted it is assigned the configured default value. "
-        "Phase 2 will replace the default with an AI classifier."
+        "Severity is automatically assigned by the AI classifier (Phase 2). "
+        "High-severity, non-duplicate incidents trigger an emergency alert (Phase 3)."
     ),
 )
 async def create_incident(
     payload: IncidentCreate,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ) -> IncidentResponse:
     try:
@@ -62,6 +64,19 @@ async def create_incident(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to create incident. Please try again.",
         ) from exc
+
+    # ── Phase 3: Queue notification AFTER successful DB persist ───────────────
+    # Conditions: notifications enabled AND severity in the notify list
+    #             AND this report is NOT a duplicate of an existing incident.
+    # BackgroundTasks run after the response is sent — a failure here
+    # NEVER causes a 500 or rolls back the saved incident.
+    should_notify = (
+        settings.NOTIFICATION_ENABLED
+        and incident.severity in settings.notify_severities_list
+        and not incident.is_duplicate
+    )
+    if should_notify:
+        background_tasks.add_task(notification_service.dispatch_alert, incident)
 
     return IncidentResponse.model_validate(incident)
 
