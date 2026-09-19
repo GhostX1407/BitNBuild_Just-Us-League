@@ -76,6 +76,11 @@ class Incident(Base, TimestampMixin):
     # ── Optional reporter information ──────────────────────────────────────────
     reporter_info: Mapped[str | None] = mapped_column(Text, nullable=True)
 
+    # ── Phase 2: AI & Deduplication ────────────────────────────────────────────
+    classification_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_duplicate: Mapped[bool] = mapped_column(default=False, nullable=False)
+    duplicate_of_id: Mapped[int | None] = mapped_column(nullable=True)
+
     # ── Table-level constraints & composite indexes ───────────────────────────
     __table_args__ = (
         CheckConstraint(

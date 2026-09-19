@@ -34,6 +34,8 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+from app.services import ai_service, duplicate_service
+
 # ── CRUD operations ───────────────────────────────────────────────────────────
 
 
@@ -43,16 +45,23 @@ async def create_incident(
 ) -> Incident:
     """
     Persist a new incident and return the ORM object.
-
-    Severity assignment
-    ───────────────────
-    Phase 1: use the caller-supplied severity; fall back to DEFAULT_SEVERITY.
-    Phase 2: replace the fallback line with AI classifier output, e.g.:
-        severity = await ai_classifier.classify(payload) or payload.severity
+    
+    Phase 2 Integration:
+    - Automatically classifies severity based on the description text.
+    - Checks for an active duplicate incident in the same area.
     """
-    # ── Phase 2 hook: AI severity classification ──────────────────────────────
-    # severity = await ai_service.predict_severity(payload)   ← insert here
-    severity = payload.severity or settings.DEFAULT_SEVERITY
+    # ── Phase 2: AI severity classification ──────────────────────────────
+    ai_severity, ai_reason = await ai_service.classify_severity(payload.description)
+    
+    # ── Phase 2: Duplicate detection ─────────────────────────────────────
+    duplicate = await duplicate_service.detect_duplicate(db, payload)
+    
+    is_duplicate = False
+    duplicate_of_id = None
+    
+    if duplicate:
+        is_duplicate = True
+        duplicate_of_id = duplicate.id
 
     incident = Incident(
         title=payload.title,
@@ -60,7 +69,10 @@ async def create_incident(
         latitude=float(payload.latitude),
         longitude=float(payload.longitude),
         category=payload.category,
-        severity=severity,
+        severity=ai_severity,
+        classification_reason=ai_reason,
+        is_duplicate=is_duplicate,
+        duplicate_of_id=duplicate_of_id,
         status="Pending",
         reporter_info=payload.reporter_info,
     )

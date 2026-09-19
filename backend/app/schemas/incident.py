@@ -165,6 +165,9 @@ class IncidentResponse(IncidentBase):
     id: int
     severity: str
     status: str
+    is_duplicate: bool
+    duplicate_of_id: Optional[int] = None
+    classification_reason: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 

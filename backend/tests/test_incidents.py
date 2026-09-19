@@ -206,3 +206,65 @@ async def test_update_status_invalid(client: AsyncClient):
         json={"status": "Cancelled"},
     )
     assert response.status_code == 422
+
+
+# ── Phase 2 Tests ────────────────────────────────────────────────────────────
+
+async def test_ai_severity_classification_high(client: AsyncClient):
+    payload = {
+        "title": "Explosion downtown",
+        "description": "Massive explosion with multiple casualties",
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "category": "Other",
+    }
+    response = await client.post("/api/incidents", json=payload)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["severity"] == "High"
+    assert "multiple casualties" in data["classification_reason"].lower() or "explosion" in data["classification_reason"].lower()
+
+
+async def test_ai_severity_classification_low_fallback(client: AsyncClient):
+    payload = {
+        "title": "Kitten in a tree",
+        "description": "A very small cat is stuck.",
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "category": "Other",
+    }
+    response = await client.post("/api/incidents", json=payload)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["severity"] == "Low"
+
+
+async def test_duplicate_detection(client: AsyncClient):
+    # 1. Create initial incident
+    payload1 = {
+        "title": "Water main break",
+        "description": "Large water main break flooding the street.",
+        "latitude": 34.0522,
+        "longitude": -118.2437,
+        "category": "Other",
+    }
+    res1 = await client.post("/api/incidents", json=payload1)
+    assert res1.status_code == 201
+    orig_incident = res1.json()
+    assert orig_incident["is_duplicate"] is False
+
+    # 2. Create second identical incident right next to it (10 meters away)
+    payload2 = {
+        "title": "Water main broke",
+        "description": "Huge water main break flooding the entire street.",
+        "latitude": 34.0523, # Slightly different
+        "longitude": -118.2437,
+        "category": "Other",
+    }
+    res2 = await client.post("/api/incidents", json=payload2)
+    assert res2.status_code == 201
+    dup_incident = res2.json()
+    
+    assert dup_incident["is_duplicate"] is True
+    assert dup_incident["duplicate_of_id"] == orig_incident["id"]
+
