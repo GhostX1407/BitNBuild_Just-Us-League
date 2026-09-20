@@ -51,16 +51,16 @@ def _geo_score(
     rep_lng: Optional[float],
     inc_type: str,
     location_uncertain: bool,
-) -> float:
+) -> Tuple[float, Optional[float]]:
     if inc_lat is None or inc_lng is None or rep_lat is None or rep_lng is None:
-        return 0.3  # neutral when no location
+        return 0.3, None  # neutral when no location
     from app.services.geo import haversine_km
     d = haversine_km(inc_lat, inc_lng, rep_lat, rep_lng)
     radius = _FLOOD_RADIUS_KM if inc_type == "flood" else _DEFAULT_RADIUS_KM
     score = max(0.0, 1.0 - d / radius)
     if location_uncertain:
         score *= 0.5  # cap contribution for uncertain locations
-    return score
+    return score, d
 
 
 def _text_score(inc_texts: List[str], rep_text: str) -> float:
@@ -147,7 +147,7 @@ async def find_candidates(
         if incident.summary:
             inc_texts.append(incident.summary)
 
-        geo = _geo_score(
+        geo, d = _geo_score(
             incident.lat, incident.lng,
             rep_lat, rep_lng,
             incident.type,
@@ -158,6 +158,10 @@ async def find_candidates(
         time = _time_score(incident.created_at)
 
         score = 0.40 * geo + 0.35 * text + 0.15 * typ + 0.10 * time
+
+        # Proximity override: If same/compatible type and <= 200m away, guarantee merge
+        if d is not None and d <= 0.2 and typ >= 0.5 and not location_uncertain:
+            score = max(score, MERGE_T)
 
         if score >= RELATED_T:
             scored.append((incident, score))

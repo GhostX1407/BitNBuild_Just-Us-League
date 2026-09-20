@@ -49,19 +49,22 @@ for _entry in _GAZETTEER:
         _INDEX[_n.lower().strip()] = _entry
 
 
-def _nearest_area(lat: float, lng: float) -> Optional[str]:
-    """Return the ward name of the nearest gazetteer entry."""
+def _nearest_area(lat: float, lng: float) -> str:
+    """Return the ward name of the nearest gazetteer entry within 2.5 km, else Vadodara."""
     if not _GAZETTEER:
-        return None
+        return "Vadodara"
+    from app.services.geo import haversine_km
     best: Optional[Dict] = None
     best_d = float("inf")
     for entry in _GAZETTEER:
         elat, elng = entry.get("lat", 0.0), entry.get("lng", 0.0)
-        d = math.sqrt((lat - elat) ** 2 + (lng - elng) ** 2)
+        d = haversine_km(lat, lng, elat, elng)
         if d < best_d:
             best_d = d
             best = entry
-    return best["ward"] if best else None
+    if best and best_d <= 2.5:
+        return best["ward"]
+    return "Vadodara"
 
 
 def _exact_match(text: str) -> Optional[Tuple[Dict, float]]:

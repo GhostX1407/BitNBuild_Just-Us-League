@@ -203,3 +203,27 @@ async def test_geocode_never_raises():
     r = await resolve({}, "citizen")
     assert isinstance(r, dict)
     assert "lat" in r and "lng" in r
+
+@pytest.mark.asyncio
+async def test_geocode_aliases():
+    for alias in ["NH48", "NH 48", "NH-48", "national highway 48", "bypass"]:
+        r = await resolve({"text": f"accident on {alias}"}, "citizen")
+        assert r["area"] == "Bypass"
+
+    for alias in ["Vishwamitri", "river Vishwamitri"]:
+        r = await resolve({"text": f"flood near {alias}"}, "citizen")
+        assert r["area"] == "Vishwamitri"
+
+    for alias in ["Waghodia road", "GIDC"]:
+        r = await resolve({"text": f"incident at {alias}"}, "citizen")
+        assert r["method"] == "gazetteer"
+
+@pytest.mark.asyncio
+async def test_geocode_explicit_within_radius():
+    r = await resolve({"lat": 22.2855, "lng": 73.1605}, "citizen")
+    assert r["area"] == "Bypass"
+
+@pytest.mark.asyncio
+async def test_geocode_explicit_outside_radius():
+    r = await resolve({"lat": 10.0, "lng": 10.0}, "citizen")
+    assert r["area"] == "Vadodara"

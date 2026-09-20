@@ -5,6 +5,7 @@ import asyncio
 import datetime
 import pytest
 import pytest_asyncio
+from unittest.mock import patch
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -211,6 +212,11 @@ async def test_dedupe_resolved_excluded(session):
 # ---------------------------------------------------------------------------
 # Pipeline tests (idempotency, merge, severity, sensor)
 # ---------------------------------------------------------------------------
+
+@pytest.fixture(autouse=True)
+def mock_post_pipeline():
+    with patch("app.services.pipeline._post_pipeline") as mock:
+        yield mock
 
 @pytest.mark.asyncio
 async def test_pipeline_new_incident():

@@ -81,7 +81,15 @@
     "Paani aaney ki aashanka hai",
     "River bank overflow warning",
     "Water supply contaminated by flooding",
-    "Multiple areas underwater after heavy rain"
+    "Multiple areas underwater after heavy rain",
+    "water entering homes",
+    "people stranded on roof",
+    "road submerged",
+    "river overflowing near Vishwamitri",
+    "flood situation getting worse",
+    "need rescue boats fast",
+    "we are trapped on the first floor because of the flood water",
+    "send help, water everywhere"
   ],
   "road_accident": [
     "Major accident on highway near bypass",
@@ -123,7 +131,11 @@
     "Car accident victim not breathing",
     "Pile up of 5 vehicles on bypass",
     "Old man hit by speeding vehicle",
-    "Accident on wet road after rain"
+    "Accident on wet road after rain",
+    "multiple vehicles collided on NH48",
+    "several people injured in crash",
+    "truck overturned, cars pile up, ambulance needed",
+    "highway blocked, many injured"
   ],
   "medical": [
     "Person collapsed on street",

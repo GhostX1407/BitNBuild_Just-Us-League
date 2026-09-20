@@ -86,17 +86,12 @@ def _normalise_text(source: str, payload: Dict[str, Any]) -> str:
 
 async def _get_next_incident_code(session) -> str:
     """Generate next INC-#### code (max existing numeric + 1, across all incidents)."""
+    from sqlalchemy import cast, Integer
     result = await session.execute(
-        select(func.max(Incident.code)).where(Incident.code.like("INC-%"))
+        select(func.max(cast(func.substr(Incident.code, 5), Integer))).where(Incident.code.like("INC-%"))
     )
-    max_code: Optional[str] = result.scalar()
-    if max_code:
-        try:
-            num = int(max_code.split("-")[1]) + 1
-        except (IndexError, ValueError):
-            num = 1
-    else:
-        num = 1
+    max_num: Optional[int] = result.scalar()
+    num = (max_num + 1) if max_num else 1
     return f"INC-{num:04d}"
 
 
@@ -330,15 +325,41 @@ async def ingest_report(source: str, payload: Dict[str, Any]) -> Dict[str, Any]:
                     # Return original result
                     incident_id = existing_report.incident_id
                     track_id = None
+                    action = "new"
                     if incident_id:
                         inc = await session.get(Incident, incident_id)
-                        track_id = inc.track_id if inc else None
+                        if inc:
+                            track_id = inc.track_id
+                            # Determine original action by checking if it's the first report
+                            from sqlalchemy import asc
+                            first_rep = await session.execute(
+                                select(Report)
+                                .where(Report.incident_id == incident_id)
+                                .order_by(asc(Report.created_at))
+                                .limit(1)
+                            )
+                            fr = first_rep.scalar_one_or_none()
+                            if fr and fr.id != existing_report.id:
+                                action = "merged"
+                            else:
+                                # It was the creator. Check if it was "related"
+                                audit_res = await session.execute(
+                                    select(AuditEvent).where(
+                                        AuditEvent.entity_id == incident_id,
+                                        AuditEvent.action == "incident.created"
+                                    )
+                                )
+                                ca = audit_res.scalar_one_or_none()
+                                if ca and ca.data.get("action") == "related":
+                                    action = "related"
+
                     return {
                         "report_id": existing_report.id,
                         "incident_id": incident_id,
-                        "action": "merged",
+                        "action": action,
                         "classification": existing_report.classification,
                         "track_id": track_id,
+                        "idempotent": True,
                     }
 
             now = _now_utc()

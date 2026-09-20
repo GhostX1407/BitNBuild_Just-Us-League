@@ -54,11 +54,12 @@ _SEV5_WORDS = {
 _SEV4_WORDS = {
     "trapped", "unconscious", "not breathing", "fire spreading", "fire spread",
     "chemical", "chlorine", "ammonia", "serious injury", "critical", "major accident",
-    "multiple injured",
+    "multiple injured", "injured", "people injured", "many injured", "stranded",
 }
 _SEV3_WORDS = {
-    "injured", "burn", "bleeding", "accident", "crash", "fire", "flood",
+    "burn", "bleeding", "accident", "crash", "fire", "flood",
     "collapse", "leak", "gas", "medical", "emergency", "urgent", "rescue",
+    "multiple vehicles", "pile-up", "pile up", "collided", "overturned",
 }
 
 # Numeric extraction patterns
@@ -125,7 +126,7 @@ def _sensor_classify(payload: Dict[str, Any]) -> Dict[str, Any]:
         if ratio >= 2.0:
             severity = 5
             reasoning += f" value={value} is {ratio:.1f}× threshold — critical"
-        elif ratio >= 1.5:
+        elif ratio >= 1.2:
             severity = 4
             reasoning += f" value={value} is {ratio:.1f}× threshold — high"
         else:
@@ -247,7 +248,7 @@ def warm_up() -> None:
 
 _SAFETY_FLOOR_CUES = {
     "trapped", "unconscious", "explosion", "chemical", "children",
-    "not breathing", "fatalities", "fatal", "collapse",
+    "not breathing", "fatalities", "fatal", "collapse", "stranded",
 }
 
 

@@ -19,7 +19,7 @@ SLA_BASE: dict[str, int] = {"P1": 2, "P2": 5, "P3": 10, "P4": 20}
 # Hazards / cues that indicate life risk
 _LIFE_CUES = {
     "trapped", "unconscious", "injured", "fatal", "fatalities",
-    "not breathing", "children", "child",
+    "not breathing", "children", "child", "stranded",
 }
 _HAZMAT_HAZARDS = {
     "chemical", "explosion", "toxic", "collapse", "fire_spreading",
