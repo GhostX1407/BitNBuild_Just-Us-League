@@ -7,11 +7,18 @@ from typing import Any, Dict
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from app.core.llm import check_health
 from app.core.roles import require_roles
 from app.services.ai_assist import get_summary, get_sop, get_brief, query as ai_query
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/ai", tags=["ai"], dependencies=[Depends(require_roles("dispatcher"))])
+
+
+@router.get("/health")
+async def ai_health() -> Dict[str, Any]:
+    """Live 1-token text call to Groq and Gemini + a tiny vision call on a generated 64x64 PNG."""
+    return await check_health()
 
 
 class QueryBody(BaseModel):

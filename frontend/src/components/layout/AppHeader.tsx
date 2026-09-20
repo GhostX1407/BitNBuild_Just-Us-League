@@ -16,6 +16,9 @@ import {
   Compass,
   Send,
   Bed,
+  Megaphone,
+  Handshake,
+  BookOpen,
 } from 'lucide-react';
 import { useNotificationsStore } from '../../store/notifications';
 import { useUiStore } from '../../store/ui';
@@ -58,6 +61,9 @@ export const AppHeader: React.FC = () => {
           { to: `/team/${activeUnitId}`, label: 'Field HUD', icon: <Radio className="w-3.5 h-3.5" /> },
           { to: `/hospital/${activeHospitalId}`, label: 'Hospital Surge', icon: <Building2 className="w-3.5 h-3.5" /> },
           { to: '/analytics', label: 'Analytics', icon: <BarChart3 className="w-3.5 h-3.5" /> },
+          { to: '/broadcast', label: 'Broadcast', icon: <Megaphone className="w-3.5 h-3.5" /> },
+          { to: '/mutual-aid', label: 'Mutual Aid', icon: <Handshake className="w-3.5 h-3.5" /> },
+          { to: '/ops', label: 'Ops Center', icon: <BookOpen className="w-3.5 h-3.5" /> },
           { to: '/simulator', label: 'Simulator', icon: <Sliders className="w-3.5 h-3.5" /> },
         ];
       case 'team':

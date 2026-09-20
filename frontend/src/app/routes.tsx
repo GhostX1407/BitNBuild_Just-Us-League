@@ -10,6 +10,9 @@ import { TrackPage } from '../pages/Track/TrackPage';
 import { HospitalPage } from '../pages/Hospital/HospitalPage';
 import { SimulatorPage } from '../pages/Simulator/SimulatorPage';
 import { AlertsPage } from '../pages/Alerts/AlertsPage';
+import { BroadcastPage } from '../pages/Broadcast/BroadcastPage';
+import { MutualAidPage } from '../pages/MutualAid/MutualAidPage';
+import { OpsPage } from '../pages/Ops/OpsPage';
 import { useUiStore } from '../store/ui';
 
 const pageVariants = {
@@ -141,6 +144,32 @@ export const AppRoutes: React.FC = () => {
           <Route path="/report" element={<ReportPage />} />
           <Route path="/track/:trackId" element={<TrackPage />} />
           <Route path="/track" element={<Navigate to="/track/TRK-9821" replace />} />
+
+          {/* v2: Broadcast, Mutual Aid, Ops Center */}
+          <Route
+            path="/broadcast"
+            element={
+              <RoleGuard allowedRoles={['dispatcher']}>
+                <BroadcastPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/mutual-aid"
+            element={
+              <RoleGuard allowedRoles={['dispatcher']}>
+                <MutualAidPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/ops"
+            element={
+              <RoleGuard allowedRoles={['dispatcher']}>
+                <OpsPage />
+              </RoleGuard>
+            }
+          />
 
           <Route
             path="*"

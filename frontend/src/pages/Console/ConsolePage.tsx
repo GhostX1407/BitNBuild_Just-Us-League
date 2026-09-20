@@ -21,6 +21,7 @@ import { LiveMap } from '../../components/map/LiveMap';
 import { IncidentDrawer } from '../../components/incident/IncidentDrawer';
 import { AskBox } from '../../components/ai/AskBox';
 import { SituationBrief } from '../../components/ai/SituationBrief';
+import { WeatherWidget } from '../../components/weather/WeatherWidget';
 import { useIncidentsStore } from '../../store/incidents';
 import { useAlertsStore } from '../../store/alerts';
 import { useUnitsStore } from '../../store/units';
@@ -131,6 +132,11 @@ export const ConsolePage: React.FC = () => {
               {openAlerts.length}
             </span>
           </NavLink>
+
+          {/* Live Weather Risk compact widget */}
+          <div className="hidden lg:block">
+            <WeatherWidget compact />
+          </div>
 
           {/* Dedicated Simulator Shortcut for Admin with Violet Accent */}
           {currentUser.role === 'dispatcher' && (

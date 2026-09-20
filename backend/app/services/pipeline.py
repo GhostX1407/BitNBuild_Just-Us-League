@@ -402,6 +402,29 @@ async def ingest_report(source: str, payload: Dict[str, Any]) -> Dict[str, Any]:
                     except Exception:
                         pass
 
+            # ── Multilingual: detect language + translate to English ──────────
+            detected_lang: Optional[str] = payload.get("language")
+            translated_text: Optional[str] = None
+            if text and not detected_lang:
+                # Quick heuristic: check for Devanagari or Gujarati Unicode ranges
+                if any("\u0900" <= ch <= "\u097F" for ch in text):
+                    detected_lang = "hi"
+                elif any("\u0A80" <= ch <= "\u0AFF" for ch in text):
+                    detected_lang = "gu"
+
+            if detected_lang and detected_lang not in ("en", "english") and text:
+                try:
+                    from app.core.llm import complete_json as _llm_json
+                    tl = await _llm_json(
+                        prompt=f"Translate this emergency report from {detected_lang} to English.\nText: {text[:600]}\nReturn JSON: {{\"english\": \"<translation>\"}}",
+                        system="Emergency report translator. Output only the English translation.",
+                    )
+                    if tl and tl.get("english"):
+                        translated_text = tl["english"]
+                        # Use translated text for classification (already done, best-effort)
+                except Exception:
+                    pass
+
             report = Report(
                 source=source,
                 external_id=external_id,
@@ -415,6 +438,8 @@ async def ingest_report(source: str, payload: Dict[str, Any]) -> Dict[str, Any]:
                 location_conf=geo.get("confidence"),
                 reliability=reliability,
                 classification=classification,
+                language=detected_lang,
+                translated_text=translated_text,
             )
             session.add(report)
             await session.flush()  # get report.id
