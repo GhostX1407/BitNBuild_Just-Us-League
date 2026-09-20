@@ -1,0 +1,95 @@
+{
+  "fire": [
+    "Confirm incident location and set up safety perimeter of at least 50 metres",
+    "Activate fire suppression — deploy engine and tanker units",
+    "Check for persons trapped; start rescue operations if confirmed",
+    "Notify GIDC/industrial authority if fire is in industrial premises",
+    "Establish water supply chain (hydrant or tanker relay)",
+    "Ventilate structure if possible; avoid opening windows in wind direction",
+    "Deploy hazmat team if chemical fire or unknown accelerant is suspected",
+    "Set up triage area for burn victims; alert trauma hospitals",
+    "Post fire watch for 30 minutes after suppression for re-ignition",
+    "File incident report and initiate investigation of cause"
+  ],
+  "flood": [
+    "Verify flood level with nearest gauge station or field observation",
+    "Issue immediate evacuation advisory for low-lying and riverside areas",
+    "Deploy boats and rescue teams to stranded residents",
+    "Open relief shelters (schools, community halls) and notify public",
+    "Coordinate with GWRDC for dam/barrage water release information",
+    "Block roads under water; redirect traffic with signage",
+    "Inspect drainage pumps; activate flood pumps at key stations",
+    "Alert hospitals to prepare for water-borne disease surge",
+    "Track Vishwamitri and Mahi river gauge levels every 30 min",
+    "Log displaced families and coordinate food/water distribution"
+  ],
+  "road_accident": [
+    "Secure the scene — deploy police to manage traffic and crowd",
+    "Check number of victims and call ambulances (1 per critical patient)",
+    "Apply first aid; do not move victims with suspected spinal injury",
+    "Alert nearest trauma hospital (SSG Hospital) with patient count",
+    "Clear debris from road to restore traffic within 30 min if safe",
+    "Collect witness accounts and document vehicle positions",
+    "Check for fuel leak or fire risk; keep sources of ignition away",
+    "Coordinate tow trucks for vehicle removal",
+    "Notify RTO and traffic police for FIR registration",
+    "Provide family notification support for critical victims"
+  ],
+  "medical": [
+    "Dispatch ambulance with paramedic to scene immediately",
+    "Assess patient — airways, breathing, circulation (ABC)",
+    "Start CPR if patient not breathing and pulse absent",
+    "Control bleeding with direct pressure; apply tourniquet if limb",
+    "Notify receiving hospital with patient condition and ETA",
+    "Manage crowd — keep bystanders back and scene accessible",
+    "Collect patient ID and next-of-kin information",
+    "Document presenting symptoms and time of onset",
+    "If mass casualty, activate MCI protocol and call additional units",
+    "Ensure safe handover to ER staff and complete transfer documentation"
+  ],
+  "industrial_hazard": [
+    "Declare exclusion zone — 100–500 m depending on hazard type",
+    "Identify the chemical/substance using site MSDS or placard",
+    "Deploy hazmat team in appropriate PPE; do not enter without protection",
+    "Notify GPCB (Gujarat Pollution Control Board) and factory management",
+    "Evacuate downwind residents; communicate shelter-in-place if evacuation not possible",
+    "Shut off source if safe to do so (valve, pipeline, reactor feed)",
+    "Establish decontamination corridor for affected workers",
+    "Alert toxicology unit at hospital for antidote preparation",
+    "Monitor air quality downwind with detection equipment",
+    "Document all exposed persons for medical follow-up"
+  ],
+  "building_collapse": [
+    "Establish incident command and safety officer role immediately",
+    "Conduct rapid assessment — number of floors, occupancy, hazards",
+    "Deploy USAR (Urban Search and Rescue) team with dogs and listening devices",
+    "Mark search sectors; coordinate systematic search room by room",
+    "Shut off utilities — gas, electricity — at street level",
+    "Establish casualty collection point with triage tags",
+    "Alert all hospitals for mass casualty reception",
+    "Prevent secondary collapse — shore up unstable sections before entry",
+    "Maintain communication with trapped survivors via voice/tapping",
+    "Document persons accounted for vs. missing; notify families"
+  ],
+  "gas_leak": [
+    "Evacuate building and immediate vicinity (50-metre radius minimum)",
+    "Do NOT use electrical switches, phones, or open flames near leak",
+    "Call gas utility (GGCL) emergency line to shut off supply",
+    "Ventilate the area — open windows and doors from outside if safe",
+    "Deploy gas detection equipment to verify extent of leak",
+    "Establish an ignition-free zone; no vehicles, no smoking",
+    "Alert fire brigade to stand by for potential ignition",
+    "Check for persons overcome by gas; provide fresh air and oxygen",
+    "Do not re-enter until gas levels confirmed safe by detection",
+    "Conduct post-clearance inspection before residents return"
+  ],
+  "other": [
+    "Verify the nature of the report — is this a genuine emergency?",
+    "Dispatch patrol unit for on-site assessment if uncertain",
+    "Log the report in the system with 'other' classification",
+    "Refer to appropriate city department if civic complaint",
+    "Advise caller on correct emergency channel if misdirected",
+    "Close incident if confirmed non-emergency after assessment",
+    "Document disposition and outcome in audit log"
+  ]
+}

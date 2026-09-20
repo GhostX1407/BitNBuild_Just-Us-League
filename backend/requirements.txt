@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+sqlalchemy[asyncio]>=2
+aiosqlite
+pydantic>=2
+pydantic-settings
+python-dotenv
+httpx
+scikit-learn
+numpy
+pytest
+pytest-asyncio
+websockets
