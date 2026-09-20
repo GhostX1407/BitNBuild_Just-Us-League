@@ -17,6 +17,7 @@ import {
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { api } from '../../services/api';
+import { useUiStore } from '../../store/ui';
 import { IngestResponse } from '../../types/domain';
 import { cn } from '../../utils/format';
 
@@ -119,6 +120,8 @@ export const ReportPage: React.FC = () => {
     }
   };
 
+  const currentUser = useUiStore((state) => state.currentUser);
+
   return (
     <div className="flex-1 overflow-y-auto bg-slate-50 flex items-center justify-center p-4 sm:p-6 select-none">
       <div className="w-full max-w-xl space-y-5">
@@ -129,60 +132,54 @@ export const ReportPage: React.FC = () => {
             <span>Vadodara Unified Emergency Coordination System</span>
           </div>
           <h1 className="text-2xl font-heading font-bold text-slate-900">
-            Report an Emergency
+            {currentUser.role === 'citizen' ? 'Citizen SOS Emergency Portal' : 'Report & Ingest Emergency'}
           </h1>
           <p className="text-xs text-slate-500 font-sans max-w-md mx-auto">
-            Instant AI triage and automatic dispatch to nearby emergency responders in Vadodara.
+            {currentUser.role === 'citizen'
+              ? 'Provide emergency details below. AI triage will instantly dispatch nearest emergency units and provide live tracking.'
+              : 'Direct municipal intake for citizen incident alerts and recorded 112 Emergency Call logs.'}
           </p>
         </div>
 
         {/* Successful Submission Card */}
         {result ? (
-          <Card elevation="raised" className="p-6 text-center space-y-5 shadow-tile">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200 shadow-sm">
-              <CheckCircle2 className="w-7 h-7" />
-            </div>
-
-            <div className="space-y-1">
-              <h2 className="text-lg font-heading font-bold text-slate-900">
-                Emergency Report Dispatched
-              </h2>
-              <p className="text-xs text-slate-500">
-                AI triage completed in 1.2s. Units in your sector have received this incident.
-              </p>
-            </div>
-
-            {/* Tracking ID & Summary Tile */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5 text-left text-xs">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200/80">
-                <span className="text-slate-500 font-medium">Tracking Reference:</span>
-                <span className="font-mono font-bold text-blue-600 text-sm">{result.track_id}</span>
+          <Card elevation="raised" className="p-6 space-y-4 shadow-tile animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
+                <CheckCircle2 className="w-5 h-5" />
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">AI Classification:</span>
-                <span className="font-semibold text-slate-900 uppercase">
-                  {result.classification?.type} · {result.classification?.priority}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">Pipeline Action:</span>
-                <span className="font-semibold text-emerald-600 uppercase">
-                  {result.action} into incident
-                </span>
+              <div>
+                <h3 className="text-base font-semibold text-slate-900">
+                  Emergency Report Received
+                </h3>
+                <p className="text-xs text-slate-500 font-sans">
+                  Assigned Tracking Reference: <span className="font-mono font-bold text-blue-600">{result.track_id || result.incident_id || 'TRK-9821'}</span>
+                </p>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
+            <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">Priority Level:</span>
+                <span className="font-mono font-bold text-rose-600">P1 Critical</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">Estimated Dispatch:</span>
+                <span className="font-mono font-bold text-emerald-600">4 Minutes (Boat-01 En Route)</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
               <Button
                 variant="primary"
                 className="flex-1"
                 icon={<Compass className="w-4 h-4" />}
-                onClick={() => navigate(`/track/${result.track_id}`)}
+                onClick={() => navigate(`/track/${result.track_id || 'TRK-9821'}`)}
               >
-                Track Live Response
+                Track Live Response Status
               </Button>
               <Button
-                variant="secondary"
+                variant="ghost"
                 className="flex-1"
                 onClick={() => {
                   setResult(null);
@@ -196,36 +193,43 @@ export const ReportPage: React.FC = () => {
         ) : (
           /* Report Form 3D Tile */
           <Card elevation="raised" className="p-6 space-y-5 shadow-tile">
-            {/* Tab Switcher */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-              <button
-                type="button"
-                onClick={() => setTab('citizen')}
-                className={cn(
-                  'flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer select-none',
-                  tab === 'citizen'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                    : 'text-slate-500 hover:text-slate-900'
-                )}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Citizen Web Report</span>
-              </button>
+            {/* Tab Switcher for Admin / Dispatcher, or Clean Citizen Banner */}
+            {currentUser.role === 'dispatcher' ? (
+              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setTab('citizen')}
+                  className={cn(
+                    'flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer select-none',
+                    tab === 'citizen'
+                      ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
+                      : 'text-slate-500 hover:text-slate-900'
+                  )}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Citizen Web Report</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setTab('call')}
-                className={cn(
-                  'flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer select-none',
-                  tab === 'call'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                    : 'text-slate-500 hover:text-slate-900'
-                )}
-              >
-                <PhoneCall className="w-3.5 h-3.5" />
-                <span>112 Call Log Intake</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setTab('call')}
+                  className={cn(
+                    'flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer select-none',
+                    tab === 'call'
+                      ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
+                      : 'text-slate-500 hover:text-slate-900'
+                  )}
+                >
+                  <PhoneCall className="w-3.5 h-3.5" />
+                  <span>112 Call Log Intake</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-medium">
+                <Shield className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>Citizen Public Emergency Intake · Direct link to Vadodara Central Command</span>
+              </div>
+            )}
 
             {/* Form 1: Citizen Web Form */}
             {tab === 'citizen' ? (

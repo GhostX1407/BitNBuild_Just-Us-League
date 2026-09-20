@@ -17,7 +17,7 @@ import { INITIAL_REPORTS } from '../../services/mock';
 
 interface LinkedReportsProps {
   incident: IncidentOut;
-  onOpenMergeDialog: () => void;
+  onOpenMergeDialog?: () => void;
 }
 
 export const LinkedReports: React.FC<LinkedReportsProps> = ({
@@ -57,14 +57,16 @@ export const LinkedReports: React.FC<LinkedReportsProps> = ({
           <Layers className="w-4 h-4 text-indigo-600" />
           <span>Consolidated Reports ({incident.report_count})</span>
         </div>
-        <Button
-          size="sm"
-          variant="secondary"
-          icon={<GitMerge className="w-3.5 h-3.5 text-indigo-600" />}
-          onClick={onOpenMergeDialog}
-        >
-          Merge Related
-        </Button>
+        {onOpenMergeDialog && (
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={<GitMerge className="w-3.5 h-3.5 text-indigo-600" />}
+            onClick={onOpenMergeDialog}
+          >
+            Merge Related
+          </Button>
+        )}
       </div>
 
       <div className="space-y-2.5">

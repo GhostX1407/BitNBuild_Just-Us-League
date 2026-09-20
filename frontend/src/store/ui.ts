@@ -10,6 +10,15 @@ export interface UserProfile {
   agency: string;
   initials: string;
   route: string;
+  scopeDescription: string;
+  badgeLabel: string;
+  badgeColor: string;
+  allowedRoutes: string[];
+  features: string[];
+  restrictedFeatures: string[];
+  canSimulate: boolean;
+  canDispatch: boolean;
+  canOverridePriority: boolean;
 }
 
 export const USER_PROFILES: UserProfile[] = [
@@ -21,15 +30,33 @@ export const USER_PROFILES: UserProfile[] = [
     agency: 'Vadodara Emergency Ops Center',
     initials: 'AS',
     route: '/console',
+    scopeDescription: 'Full Platform Authority (Console, Simulator, Fleets, Hospitals, AI Triage & Analytics)',
+    badgeLabel: 'Full Admin Access',
+    badgeColor: 'bg-slate-900 text-white',
+    allowedRoutes: ['/console', '/alerts', '/analytics', '/simulator', '/hospital', '/team', '/report', '/track'],
+    features: ['Central Command Console', 'Alerts & Escalation Feed', 'Live Chaos Simulator', 'Fleet Dispatch Approvals', 'Hospital Bed Surge Management', 'Citywide Analytics & Deduplication', '112 Call Log Intake'],
+    restrictedFeatures: [],
+    canSimulate: true,
+    canDispatch: true,
+    canOverridePriority: true,
   },
   {
     id: 'user-field',
     name: 'Vikram Rathod',
     role: 'team',
-    roleTitle: 'Field Team Lead',
+    roleTitle: 'Field Tactical Lead',
     agency: 'SDRF Water Rescue (Boat-01)',
     initials: 'VR',
     route: '/team/unit-boat-01',
+    scopeDescription: 'Field Tactical HUD, Live GPS Coordinates, SOP Action Items, and On-Scene SITREP Transmission.',
+    badgeLabel: 'Tactical Field Ops',
+    badgeColor: 'bg-emerald-600 text-white',
+    allowedRoutes: ['/team', '/console', '/alerts', '/report', '/track'],
+    features: ['Field Tactical HUD', 'Tactical Incident Map', 'Alerts Feed', 'Live Unit Telemetry', 'Tactical SOP Checklist', 'SITREP Status Transmission'],
+    restrictedFeatures: ['Chaos Simulator (Admin Only)', 'Citywide Analytics (Admin/Hospital Only)', 'Fleet Dispatch Override (Admin Only)'],
+    canSimulate: false,
+    canDispatch: false,
+    canOverridePriority: false,
   },
   {
     id: 'user-hospital',
@@ -39,15 +66,33 @@ export const USER_PROFILES: UserProfile[] = [
     agency: 'SSG Civil Hospital',
     initials: 'NP',
     route: '/hospital/fac-ssg',
+    scopeDescription: 'Trauma & ICU Bed Surge Counters, Ambulance Diversion Switch, Casualty Stream Intake, and Shortage Analytics.',
+    badgeLabel: 'Trauma & Bed Surge',
+    badgeColor: 'bg-rose-600 text-white',
+    allowedRoutes: ['/hospital', '/analytics', '/alerts', '/console', '/report', '/track'],
+    features: ['Trauma & ICU Bed Surge Counter', 'Ambulance Diversion Switch', 'Casualty Triage Stream', 'Medical Shortage Analytics', 'Resource Supply Status'],
+    restrictedFeatures: ['Chaos Simulator (Admin Only)', 'Field Fleet Dispatch (Admin Only)', 'Police/Fire Incident Priority Override'],
+    canSimulate: false,
+    canDispatch: false,
+    canOverridePriority: false,
   },
   {
     id: 'user-citizen',
     name: 'Citizen Portal',
     role: 'citizen',
-    roleTitle: 'Public Informant & Tracker',
+    roleTitle: 'Public Citizen Reporter',
     agency: 'Vadodara Public Intake',
     initials: 'CP',
     route: '/report',
+    scopeDescription: 'Public Emergency SOS Intake (Web Form, Voice Note, Photo) and Live Emergency Request Tracking.',
+    badgeLabel: 'Public Citizen Portal',
+    badgeColor: 'bg-amber-600 text-white',
+    allowedRoutes: ['/report', '/track'],
+    features: ['Public SOS Emergency Report', 'Live Ambulance / Rescue Boat Tracking', 'Voice Dictation SOS', 'Emergency Photo Attachment'],
+    restrictedFeatures: ['Central Command Console', 'Chaos Simulator', 'Field Fleet Controls', 'Hospital Bed Surge Systems', 'EOC Analytics'],
+    canSimulate: false,
+    canDispatch: false,
+    canOverridePriority: false,
   },
 ];
 

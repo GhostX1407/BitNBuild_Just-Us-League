@@ -8,6 +8,7 @@ import { cn } from '../../utils/format';
 export const NotificationDrawer: React.FC = () => {
   const isOpen = useUiStore((state) => state.isNotificationOpen);
   const setOpen = useUiStore((state) => state.setNotificationOpen);
+  const currentUser = useUiStore((state) => state.currentUser);
   const notifications = useNotificationsStore((state) => state.notifications);
   const markAllRead = useNotificationsStore((state) => state.markAllRead);
 
@@ -27,13 +28,18 @@ export const NotificationDrawer: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl flex flex-col animate-in slide-in-from-right duration-200 select-none">
       <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
         <div className="flex items-center gap-2">
           <Send className="w-4 h-4 text-slate-900" />
-          <h2 className="text-sm font-semibold text-slate-900">
-            Dispatched Notifications
-          </h2>
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900 leading-none">
+              Dispatched Outbox & Alerts
+            </h2>
+            <span className="text-[10px] text-slate-500 font-medium">
+              Targeted to: {currentUser.roleTitle}
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button

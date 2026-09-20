@@ -36,6 +36,8 @@ export const RecommendationPanel: React.FC<RecommendationPanelProps> = ({ incide
     }, 500);
   };
 
+  const currentUser = useUiStore((state) => state.currentUser);
+
   return (
     <div className="space-y-3.5">
       <div className="flex items-center justify-between">
@@ -43,25 +45,31 @@ export const RecommendationPanel: React.FC<RecommendationPanelProps> = ({ incide
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
           <span>Resource Matching</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="ghost"
-            icon={<RefreshCw className={`w-3.5 h-3.5 ${isPlanning ? 'animate-spin' : ''}`} />}
-            onClick={handleReplan}
-            disabled={isPlanning}
-          >
-            Re-plan
-          </Button>
-          <Button
-            size="sm"
-            variant="primary"
-            icon={<CheckCheck className="w-3.5 h-3.5" />}
-            onClick={handleApproveAll}
-          >
-            Approve All
-          </Button>
-        </div>
+        {currentUser.role === 'dispatcher' ? (
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              icon={<RefreshCw className={`w-3.5 h-3.5 ${isPlanning ? 'animate-spin' : ''}`} />}
+              onClick={handleReplan}
+              disabled={isPlanning}
+            >
+              Re-plan
+            </Button>
+            <Button
+              size="sm"
+              variant="primary"
+              icon={<CheckCheck className="w-3.5 h-3.5" />}
+              onClick={handleApproveAll}
+            >
+              Approve All
+            </Button>
+          </div>
+        ) : (
+          <span className="text-[11px] font-medium text-slate-500 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200">
+            EOC Dispatch Authority
+          </span>
+        )}
       </div>
 
       {/* Shortage Warning */}

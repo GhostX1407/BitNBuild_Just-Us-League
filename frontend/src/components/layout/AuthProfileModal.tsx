@@ -109,8 +109,13 @@ export const AuthProfileModal: React.FC = () => {
                   </div>
 
                   <div className="space-y-0.5 flex-1 pr-14">
-                    <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                      {profile.roleTitle}
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        {profile.roleTitle}
+                      </span>
+                      <span className={cn('text-[9px] font-mono px-2 py-0.2 rounded-full font-bold', profile.badgeColor)}>
+                        {profile.badgeLabel}
+                      </span>
                     </div>
                     <div className="text-sm font-heading font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                       {profile.name}
@@ -121,9 +126,13 @@ export const AuthProfileModal: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                <p className="mt-2 text-[11px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 leading-snug">
+                  {profile.scopeDescription}
+                </p>
+
+                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
                   <span className="text-[11px] text-slate-400 font-mono">
-                    Target: {profile.route}
+                    Workspace: {profile.route}
                   </span>
                   <span className="text-xs font-semibold text-slate-800 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                     Switch Persona →

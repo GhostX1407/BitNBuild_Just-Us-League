@@ -9,6 +9,7 @@ import { TeamPage } from '../pages/Team/TeamPage';
 import { TrackPage } from '../pages/Track/TrackPage';
 import { HospitalPage } from '../pages/Hospital/HospitalPage';
 import { SimulatorPage } from '../pages/Simulator/SimulatorPage';
+import { AlertsPage } from '../pages/Alerts/AlertsPage';
 import { useUiStore } from '../store/ui';
 
 const pageVariants = {
@@ -22,9 +23,39 @@ const pageTransition = {
   ease: [0.16, 1, 0.3, 1],
 };
 
+interface RoleGuardProps {
+  children: React.ReactNode;
+  allowedRoles: string[];
+}
+
+const RoleGuard: React.FC<RoleGuardProps> = ({ children, allowedRoles }) => {
+  const isAuthenticated = useUiStore((state) => state.isAuthenticated);
+  const currentUser = useUiStore((state) => state.currentUser);
+  const showToast = useUiStore((state) => state.showToast);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const isAllowed = allowedRoles.includes(currentUser.role);
+  if (!isAllowed) {
+    setTimeout(() => {
+      showToast({
+        title: 'Access Restricted',
+        message: `${currentUser.roleTitle} permissions do not grant access to this workspace. Redirected to your authorized portal.`,
+        type: 'warn',
+      });
+    }, 150);
+    return <Navigate to={currentUser.route} replace />;
+  }
+
+  return <>{children}</>;
+};
+
 export const AppRoutes: React.FC = () => {
   const location = useLocation();
   const isAuthenticated = useUiStore((state) => state.isAuthenticated);
+  const currentUser = useUiStore((state) => state.currentUser);
 
   return (
     <AnimatePresence mode="wait">
@@ -40,31 +71,80 @@ export const AppRoutes: React.FC = () => {
         <Routes location={location}>
           <Route
             path="/"
-            element={<Navigate to={isAuthenticated ? '/console' : '/login'} replace />}
+            element={<Navigate to={isAuthenticated ? currentUser.route : '/login'} replace />}
           />
           <Route path="/login" element={<LoginPage />} />
+
+          {/* Console: Admin, Field Lead, and Hospital Admin */}
           <Route
             path="/console"
-            element={isAuthenticated ? <ConsolePage /> : <Navigate to="/login" replace />}
+            element={
+              <RoleGuard allowedRoles={['dispatcher', 'team', 'hospital']}>
+                <ConsolePage />
+              </RoleGuard>
+            }
           />
+
+          {/* Dedicated Alerts Feed: Admin, Field Lead, and Hospital Director */}
+          <Route
+            path="/alerts"
+            element={
+              <RoleGuard allowedRoles={['dispatcher', 'team', 'hospital']}>
+                <AlertsPage />
+              </RoleGuard>
+            }
+          />
+
+          {/* Analytics: Admin and Hospital Director */}
           <Route
             path="/analytics"
-            element={isAuthenticated ? <AnalyticsPage /> : <Navigate to="/login" replace />}
+            element={
+              <RoleGuard allowedRoles={['dispatcher', 'hospital']}>
+                <AnalyticsPage />
+              </RoleGuard>
+            }
           />
-          <Route path="/report" element={<ReportPage />} />
-          <Route path="/team/:unitId" element={<TeamPage />} />
-          <Route path="/team" element={<Navigate to="/team/unit-boat-01" replace />} />
-          <Route path="/track/:trackId" element={<TrackPage />} />
-          <Route path="/track" element={<Navigate to="/track/TRK-9821" replace />} />
-          <Route path="/hospital/:id" element={<HospitalPage />} />
-          <Route path="/hospital" element={<Navigate to="/hospital/fac-ssg" replace />} />
+
+          {/* Simulator: ONLY Central Dispatch Admin */}
           <Route
             path="/simulator"
-            element={isAuthenticated ? <SimulatorPage /> : <Navigate to="/login" replace />}
+            element={
+              <RoleGuard allowedRoles={['dispatcher']}>
+                <SimulatorPage />
+              </RoleGuard>
+            }
           />
+
+          {/* Field HUD: Admin and Field Teams */}
+          <Route
+            path="/team/:unitId"
+            element={
+              <RoleGuard allowedRoles={['dispatcher', 'team']}>
+                <TeamPage />
+              </RoleGuard>
+            }
+          />
+          <Route path="/team" element={<Navigate to="/team/unit-boat-01" replace />} />
+
+          {/* Hospital Bed Surge: Admin and Hospital Directors */}
+          <Route
+            path="/hospital/:id"
+            element={
+              <RoleGuard allowedRoles={['dispatcher', 'hospital']}>
+                <HospitalPage />
+              </RoleGuard>
+            }
+          />
+          <Route path="/hospital" element={<Navigate to="/hospital/fac-ssg" replace />} />
+
+          {/* Public Intake & Tracking: Open to all roles */}
+          <Route path="/report" element={<ReportPage />} />
+          <Route path="/track/:trackId" element={<TrackPage />} />
+          <Route path="/track" element={<Navigate to="/track/TRK-9821" replace />} />
+
           <Route
             path="*"
-            element={<Navigate to={isAuthenticated ? '/console' : '/login'} replace />}
+            element={<Navigate to={isAuthenticated ? currentUser.route : '/login'} replace />}
           />
         </Routes>
       </motion.div>

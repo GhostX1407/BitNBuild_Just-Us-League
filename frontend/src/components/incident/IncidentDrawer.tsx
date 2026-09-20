@@ -39,10 +39,19 @@ export const IncidentDrawer: React.FC<IncidentDrawerProps> = ({
 
   const overrideIncident = useIncidentsStore((state) => state.overrideIncident);
   const showToast = useUiStore((state) => state.showToast);
+  const currentUser = useUiStore((state) => state.currentUser);
 
   if (!incident) return null;
 
   const handleStatusChange = (newStatus: IncidentStatus) => {
+    if (currentUser.role !== 'dispatcher' && currentUser.role !== 'team') {
+      showToast({
+        title: 'Dispatch Clearance Required',
+        message: 'Incident lifecycle transitions are managed by Central EOC Dispatch.',
+        type: 'warn',
+      });
+      return;
+    }
     overrideIncident(incident.id, { status: newStatus });
     showToast({
       title: 'Status Updated',
@@ -83,13 +92,15 @@ export const IncidentDrawer: React.FC<IncidentDrawerProps> = ({
           </div>
 
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => setOverrideOpen(true)}
-              className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-white transition-colors cursor-pointer"
-              title="Manual override"
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-            </button>
+            {currentUser.role === 'dispatcher' && (
+              <button
+                onClick={() => setOverrideOpen(true)}
+                className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-white transition-colors cursor-pointer"
+                title="Manual priority override (Central Dispatch Admin)"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+              </button>
+            )}
             <button
               onClick={onClose}
               className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-white transition-colors cursor-pointer"
@@ -194,7 +205,7 @@ export const IncidentDrawer: React.FC<IncidentDrawerProps> = ({
         {activeTab === 'reports' && (
           <LinkedReports
             incident={incident}
-            onOpenMergeDialog={() => setMergeOpen(true)}
+            onOpenMergeDialog={currentUser.role === 'dispatcher' ? () => setMergeOpen(true) : undefined}
           />
         )}
 
