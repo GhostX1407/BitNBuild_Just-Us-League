@@ -1,0 +1,67 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: var(--void);
+    color: var(--paper);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+/* Crisp Clean Map Tiles */
+.light-map .leaflet-tile {
+  filter: contrast(1.02) saturate(0.95);
+}
+
+.light-map .leaflet-container {
+  background-color: #F8FAFC !important;
+}
+
+/* Modern Minimal Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Subtle 3D Tilt Card */
+.tilt-card-wrapper {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.hairline-border {
+  border: 1px solid var(--hairline);
+}
+
+.hairline-border-b {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.hairline-border-t {
+  border-top: 1px solid var(--hairline);
+}
+
+.hairline-border-r {
+  border-right: 1px solid var(--hairline);
+}
+
+.hairline-border-l {
+  border-left: 1px solid var(--hairline);
+}

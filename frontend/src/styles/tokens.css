@@ -1,0 +1,19 @@
+:root {
+  --void: #F8FAFC;
+  --console: #FFFFFF;
+  --console-raised: #F1F5F9;
+  --hairline: #E2E8F0;
+  --paper: #0F172A;
+  --slate: #64748B;
+  --slate-dim: #94A3B8;
+  --signal-amber: #F59E0B;
+  --alert-red: #EF4444;
+  --response-teal: #10B981;
+  --caution-gold: #D97706;
+  --recon-blue: #2563EB;
+
+  --p1: #EF4444;
+  --p2: #F97316;
+  --p3: #EAB308;
+  --p4: #0EA5E9;
+}
