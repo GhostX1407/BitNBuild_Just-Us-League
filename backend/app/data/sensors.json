@@ -1,0 +1,252 @@
+[
+  {
+    "id": "sensor-fld-001",
+    "kind": "flood_gauge",
+    "lat": 22.3102,
+    "lng": 73.1888,
+    "threshold": 8.0,
+    "unit": "m",
+    "last_value": 4.2,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-fld-002",
+    "kind": "flood_gauge",
+    "lat": 22.3073,
+    "lng": 73.1852,
+    "threshold": 8.5,
+    "unit": "m",
+    "last_value": 4.5,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-fld-003",
+    "kind": "flood_gauge",
+    "lat": 22.2985,
+    "lng": 73.1720,
+    "threshold": 8.0,
+    "unit": "m",
+    "last_value": 3.8,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-fld-004",
+    "kind": "flood_gauge",
+    "lat": 22.2960,
+    "lng": 73.2080,
+    "threshold": 8.0,
+    "unit": "m",
+    "last_value": 4.1,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-fld-005",
+    "kind": "flood_gauge",
+    "lat": 22.2600,
+    "lng": 73.2350,
+    "threshold": 7.5,
+    "unit": "m",
+    "last_value": 3.2,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-gas-001",
+    "kind": "gas",
+    "lat": 22.2510,
+    "lng": 73.1889,
+    "threshold": 50.0,
+    "unit": "ppm",
+    "last_value": 12.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-gas-002",
+    "kind": "gas",
+    "lat": 22.2535,
+    "lng": 73.1865,
+    "threshold": 50.0,
+    "unit": "ppm",
+    "last_value": 14.5,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-gas-003",
+    "kind": "gas",
+    "lat": 22.3450,
+    "lng": 73.1950,
+    "threshold": 60.0,
+    "unit": "ppm",
+    "last_value": 18.2,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-gas-004",
+    "kind": "gas",
+    "lat": 22.3380,
+    "lng": 73.2110,
+    "threshold": 45.0,
+    "unit": "ppm",
+    "last_value": 9.5,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-gas-005",
+    "kind": "gas",
+    "lat": 22.3369,
+    "lng": 73.1924,
+    "threshold": 50.0,
+    "unit": "ppm",
+    "last_value": 11.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-gas-006",
+    "kind": "gas",
+    "lat": 22.3490,
+    "lng": 73.2030,
+    "threshold": 55.0,
+    "unit": "ppm",
+    "last_value": 15.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-smk-001",
+    "kind": "smoke",
+    "lat": 22.2515,
+    "lng": 73.1895,
+    "threshold": 30.0,
+    "unit": "ppm",
+    "last_value": 4.5,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-smk-002",
+    "kind": "smoke",
+    "lat": 22.2540,
+    "lng": 73.1875,
+    "threshold": 30.0,
+    "unit": "ppm",
+    "last_value": 5.2,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-smk-003",
+    "kind": "smoke",
+    "lat": 22.3460,
+    "lng": 73.1960,
+    "threshold": 35.0,
+    "unit": "ppm",
+    "last_value": 6.1,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-smk-004",
+    "kind": "smoke",
+    "lat": 22.3385,
+    "lng": 73.2090,
+    "threshold": 30.0,
+    "unit": "ppm",
+    "last_value": 3.8,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-smk-005",
+    "kind": "smoke",
+    "lat": 22.3310,
+    "lng": 73.1780,
+    "threshold": 30.0,
+    "unit": "ppm",
+    "last_value": 4.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-smk-006",
+    "kind": "smoke",
+    "lat": 22.3690,
+    "lng": 73.1600,
+    "threshold": 30.0,
+    "unit": "ppm",
+    "last_value": 3.5,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-trf-001",
+    "kind": "traffic",
+    "lat": 22.2850,
+    "lng": 73.1600,
+    "threshold": 80.0,
+    "unit": "idx",
+    "last_value": 32.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-trf-002",
+    "kind": "traffic",
+    "lat": 22.3012,
+    "lng": 73.2215,
+    "threshold": 80.0,
+    "unit": "idx",
+    "last_value": 45.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-trf-003",
+    "kind": "traffic",
+    "lat": 22.3580,
+    "lng": 73.2400,
+    "threshold": 80.0,
+    "unit": "idx",
+    "last_value": 28.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-trf-004",
+    "kind": "traffic",
+    "lat": 22.2350,
+    "lng": 73.1016,
+    "threshold": 80.0,
+    "unit": "idx",
+    "last_value": 22.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-trf-005",
+    "kind": "traffic",
+    "lat": 22.2520,
+    "lng": 73.1570,
+    "threshold": 80.0,
+    "unit": "idx",
+    "last_value": 38.0,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-sei-001",
+    "kind": "seismic",
+    "lat": 22.3070,
+    "lng": 73.1852,
+    "threshold": 4.0,
+    "unit": "intensity",
+    "last_value": 0.2,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-sei-002",
+    "kind": "seismic",
+    "lat": 22.3010,
+    "lng": 73.2010,
+    "threshold": 4.0,
+    "unit": "intensity",
+    "last_value": 0.1,
+    "state": "ok"
+  },
+  {
+    "id": "sensor-sei-003",
+    "kind": "seismic",
+    "lat": 22.3036,
+    "lng": 73.1837,
+    "threshold": 4.0,
+    "unit": "intensity",
+    "last_value": 0.2,
+    "state": "ok"
+  }
+]

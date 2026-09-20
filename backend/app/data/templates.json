@@ -1,0 +1,293 @@
+{
+  "requirements": {
+    "fire": {
+      "1": [
+        {"kind": "team", "subtype": "fire_crew", "qty": 1, "mandatory": true}
+      ],
+      "2": [
+        {"kind": "vehicle", "subtype": "engine", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": false}
+      ],
+      "3": [
+        {"kind": "vehicle", "subtype": "engine", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "tanker", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": false}
+      ],
+      "4": [
+        {"kind": "vehicle", "subtype": "engine", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "tanker", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 2, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "burn", "qty": 1, "mandatory": true}
+      ],
+      "5": [
+        {"kind": "vehicle", "subtype": "engine", "qty": 4, "mandatory": true},
+        {"kind": "vehicle", "subtype": "tanker", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 3, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "team", "subtype": "hazmat", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "burn", "qty": 1, "mandatory": true}
+      ]
+    },
+    "flood": {
+      "1": [
+        {"kind": "team", "subtype": "utility", "qty": 1, "mandatory": true}
+      ],
+      "2": [
+        {"kind": "vehicle", "subtype": "boat", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": false}
+      ],
+      "3": [
+        {"kind": "vehicle", "subtype": "boat", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "shelter", "qty": 1, "mandatory": true}
+      ],
+      "4": [
+        {"kind": "vehicle", "subtype": "boat", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 2, "mandatory": true},
+        {"kind": "team", "subtype": "utility", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "shelter", "qty": 2, "mandatory": true}
+      ],
+      "5": [
+        {"kind": "vehicle", "subtype": "boat", "qty": 4, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 4, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "shelter", "qty": 3, "mandatory": true}
+      ]
+    },
+    "road_accident": {
+      "1": [
+        {"kind": "team", "subtype": "traffic", "qty": 1, "mandatory": true}
+      ],
+      "2": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": true},
+        {"kind": "team", "subtype": "traffic", "qty": 1, "mandatory": true}
+      ],
+      "3": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 1, "mandatory": true},
+        {"kind": "team", "subtype": "traffic", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 1, "mandatory": true}
+      ],
+      "4": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "crane", "qty": 1, "mandatory": true},
+        {"kind": "team", "subtype": "traffic", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 2, "mandatory": true}
+      ],
+      "5": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 5, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "crane", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 1, "mandatory": true},
+        {"kind": "team", "subtype": "traffic", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 2, "mandatory": true}
+      ]
+    },
+    "medical": {
+      "1": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": true}
+      ],
+      "2": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "icu", "qty": 1, "mandatory": false}
+      ],
+      "3": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 1, "mandatory": true}
+      ],
+      "4": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 3, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 2, "mandatory": true}
+      ],
+      "5": [
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 5, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 3, "mandatory": true}
+      ]
+    },
+    "industrial_hazard": {
+      "1": [
+        {"kind": "team", "subtype": "utility", "qty": 1, "mandatory": true}
+      ],
+      "2": [
+        {"kind": "team", "subtype": "hazmat", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 1, "mandatory": true}
+      ],
+      "3": [
+        {"kind": "team", "subtype": "hazmat", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 2, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "toxicology", "qty": 1, "mandatory": true}
+      ],
+      "4": [
+        {"kind": "team", "subtype": "hazmat", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "tanker", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 3, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "toxicology", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "burn", "qty": 1, "mandatory": true}
+      ],
+      "5": [
+        {"kind": "team", "subtype": "hazmat", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 4, "mandatory": true},
+        {"kind": "vehicle", "subtype": "tanker", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 4, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "toxicology", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "burn", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "shelter", "qty": 1, "mandatory": true}
+      ]
+    },
+    "building_collapse": {
+      "1": [
+        {"kind": "vehicle", "subtype": "rescue", "qty": 1, "mandatory": true}
+      ],
+      "2": [
+        {"kind": "vehicle", "subtype": "rescue", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": true}
+      ],
+      "3": [
+        {"kind": "vehicle", "subtype": "rescue", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "crane", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 2, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 1, "mandatory": true}
+      ],
+      "4": [
+        {"kind": "vehicle", "subtype": "rescue", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "crane", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 3, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 2, "mandatory": true}
+      ],
+      "5": [
+        {"kind": "vehicle", "subtype": "rescue", "qty": 4, "mandatory": true},
+        {"kind": "vehicle", "subtype": "crane", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 5, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "trauma", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "shelter", "qty": 2, "mandatory": true}
+      ]
+    },
+    "gas_leak": {
+      "1": [
+        {"kind": "team", "subtype": "utility", "qty": 1, "mandatory": true}
+      ],
+      "2": [
+        {"kind": "team", "subtype": "hazmat", "qty": 1, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": true}
+      ],
+      "3": [
+        {"kind": "team", "subtype": "hazmat", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 2, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "toxicology", "qty": 1, "mandatory": true}
+      ],
+      "4": [
+        {"kind": "team", "subtype": "hazmat", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 3, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "toxicology", "qty": 1, "mandatory": true},
+        {"kind": "facility", "subtype": "shelter", "qty": 1, "mandatory": true}
+      ],
+      "5": [
+        {"kind": "team", "subtype": "hazmat", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "tanker", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 4, "mandatory": true},
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "toxicology", "qty": 2, "mandatory": true},
+        {"kind": "facility", "subtype": "shelter", "qty": 2, "mandatory": true}
+      ]
+    },
+    "other": {
+      "1": [
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": true}
+      ],
+      "2": [
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": false}
+      ],
+      "3": [
+        {"kind": "team", "subtype": "police", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 1, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 1, "mandatory": true}
+      ],
+      "4": [
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 1, "mandatory": true}
+      ],
+      "5": [
+        {"kind": "team", "subtype": "police", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "rescue", "qty": 2, "mandatory": true},
+        {"kind": "vehicle", "subtype": "ambulance", "qty": 3, "mandatory": true},
+        {"kind": "vehicle", "subtype": "engine", "qty": 2, "mandatory": true}
+      ]
+    }
+  },
+  "speed_kmh": {
+    "engine": 45.0,
+    "tanker": 40.0,
+    "ambulance": 55.0,
+    "boat": 25.0,
+    "rescue": 50.0,
+    "hazmat": 45.0,
+    "utility": 40.0,
+    "traffic": 50.0,
+    "crane": 30.0,
+    "police": 50.0,
+    "fire_crew": 45.0
+  },
+  "escalation": {
+    "L1": {
+      "name": "Shift Supervisor",
+      "recipients": ["supervisor@vadodara-resq.gov.in", "+919876543211"],
+      "timeout_minutes": 5
+    },
+    "L2": {
+      "name": "District Disaster Authority (DDMA)",
+      "recipients": ["commander@vadodara-resq.gov.in", "+919876543212"],
+      "timeout_minutes": 10
+    },
+    "L3": {
+      "name": "State Emergency Ops / NDRF",
+      "recipients": ["state-sec@gujarat-resq.gov.in", "+919876543213"],
+      "timeout_minutes": 15
+    }
+  },
+  "recipients": {
+    "dispatcher": {
+      "name": "Central Control Room",
+      "phone": "+919876543210",
+      "email": "control@vadodara-resq.gov.in"
+    },
+    "shift_supervisor": {
+      "name": "Shift Supervisor",
+      "phone": "+919876543211",
+      "email": "supervisor@vadodara-resq.gov.in"
+    },
+    "district_commander": {
+      "name": "District Commander",
+      "phone": "+919876543212",
+      "email": "commander@vadodara-resq.gov.in"
+    },
+    "state_authority": {
+      "name": "State Relief Commissioner",
+      "phone": "+919876543213",
+      "email": "state-sec@gujarat-resq.gov.in"
+    }
+  }
+}
