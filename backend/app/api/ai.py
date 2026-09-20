@@ -4,13 +4,14 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from app.core.roles import require_roles
 from app.services.ai_assist import get_summary, get_sop, get_brief, query as ai_query
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/ai", tags=["ai"])
+router = APIRouter(prefix="/ai", tags=["ai"], dependencies=[Depends(require_roles("dispatcher"))])
 
 
 class QueryBody(BaseModel):
@@ -26,7 +27,7 @@ async def incident_summary(incident_id: str) -> Dict[str, Any]:
     return result
 
 
-@router.post("/incident/{incident_id}/sop")
+@router.post("/incident/{incident_id}/sop", dependencies=[Depends(require_roles("dispatcher", "team"))])
 async def incident_sop(incident_id: str) -> Dict[str, Any]:
     """SOP checklist tailored to the incident type."""
     try:

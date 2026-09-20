@@ -6,3 +6,6 @@ __pycache__/
 .env
 *.db
 .DS_Store
+frontend/public/video/
+backend/uploads/
+uploads/

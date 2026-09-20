@@ -9,6 +9,7 @@ from typing import Any, Dict, List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.roles import require_roles
 from app.db.session import get_session
 from app.schemas.analytics import (
     AnalyticsDelays,
@@ -21,7 +22,7 @@ from app.schemas.analytics import (
 )
 from app.services import analytics
 
-router = APIRouter(prefix="/analytics", tags=["analytics"])
+router = APIRouter(prefix="/analytics", tags=["analytics"], dependencies=[Depends(require_roles("admin"))])
 
 
 @router.get("/overview", response_model=AnalyticsOverview)

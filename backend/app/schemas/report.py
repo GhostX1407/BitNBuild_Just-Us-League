@@ -18,6 +18,7 @@ class CitizenReportBody(BaseModel):
     phone: Optional[str] = None
     name: Optional[str] = None
     photo_url: Optional[str] = None
+    photo_b64: Optional[str] = None
     external_id: Optional[str] = None
 
 

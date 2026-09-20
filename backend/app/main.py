@@ -126,6 +126,14 @@ app.add_middleware(
 # Load all routers
 _load_routers(app)
 
+# Static uploads mount
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
+_UPLOADS_DIR = Path(__file__).resolve().parent.parent / "uploads"
+_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/api/uploads", StaticFiles(directory=str(_UPLOADS_DIR)), name="uploads")
+
 
 # ---------------------------------------------------------------------------
 # Health check

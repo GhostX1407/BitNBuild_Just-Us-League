@@ -9,6 +9,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
+from app.core.roles import require_roles
 from app.db.models import Alert, AuditEvent, Incident, Notification, Report
 from app.db.session import get_session
 from app.schemas.incident import (
@@ -20,7 +22,6 @@ from app.schemas.incident import (
 )
 from app.services.pipeline import publish_incident, serialize_incident
 from app.services.priority import compute_priority
-from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/incidents", tags=["incidents"])
@@ -59,7 +60,7 @@ def _audit(
 # List incidents
 # ---------------------------------------------------------------------------
 
-@router.get("")
+@router.get("", dependencies=[Depends(require_roles("dispatcher"))])
 async def list_incidents(
     status: Optional[str] = Query(None),
     type: Optional[str] = Query(None),
@@ -107,7 +108,7 @@ async def list_incidents(
 # Incident detail
 # ---------------------------------------------------------------------------
 
-@router.get("/{incident_id}")
+@router.get("/{incident_id}", dependencies=[Depends(require_roles("dispatcher", "team", "hospital"))])
 async def get_incident(
     incident_id: str,
     session: AsyncSession = Depends(get_session),
@@ -138,6 +139,10 @@ async def get_incident(
             "created_at": _iso(r.created_at),
             "incident_id": r.incident_id,
             "classification": r.classification,
+            "photo_url": getattr(r, "photo_url", None),
+            "verification": getattr(r, "verification", None),
+            "language": getattr(r, "language", None),
+            "translated_text": getattr(r, "translated_text", None),
         }
         for r in reports
     ]
@@ -200,7 +205,7 @@ async def get_incident(
 # Merge
 # ---------------------------------------------------------------------------
 
-@router.post("/{incident_id}/merge")
+@router.post("/{incident_id}/merge", dependencies=[Depends(require_roles("dispatcher"))])
 async def merge_incidents(
     incident_id: str,
     body: MergeBody,
@@ -268,7 +273,7 @@ async def merge_incidents(
 # Split
 # ---------------------------------------------------------------------------
 
-@router.post("/{incident_id}/split")
+@router.post("/{incident_id}/split", dependencies=[Depends(require_roles("dispatcher"))])
 async def split_incident(
     incident_id: str,
     body: SplitBody,
@@ -345,7 +350,7 @@ async def split_incident(
 # PATCH (override)
 # ---------------------------------------------------------------------------
 
-@router.patch("/{incident_id}")
+@router.patch("/{incident_id}", dependencies=[Depends(require_roles("dispatcher"))])
 async def patch_incident(
     incident_id: str,
     body: IncidentPatch,
@@ -380,6 +385,10 @@ async def patch_incident(
     if body.escalated is not None:
         changes["escalated"] = (incident.escalated, body.escalated)
         incident.escalated = body.escalated
+    if body.verified is not None:
+        new_vstatus = "verified" if body.verified else "needs_verification"
+        changes["verification_status"] = (getattr(incident, "verification_status", "needs_verification"), new_vstatus)
+        incident.verification_status = new_vstatus
 
     # Re-run priority
     new_priority, _ = compute_priority(

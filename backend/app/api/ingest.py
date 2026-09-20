@@ -4,8 +4,9 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from app.core.roles import require_roles
 from app.schemas.report import (
     CitizenReportBody,
     CallReportBody,
@@ -32,41 +33,41 @@ async def _run(source: str, payload: Dict[str, Any]) -> Dict[str, Any]:
 
 @router.post("/citizen")
 async def ingest_citizen(body: CitizenReportBody) -> Dict[str, Any]:
-    """Ingest a citizen report."""
+    """Ingest a citizen report (public)."""
     return await _run("citizen", body.model_dump())
 
 
-@router.post("/call")
+@router.post("/call", dependencies=[Depends(require_roles("dispatcher"))])
 async def ingest_call(body: CallReportBody) -> Dict[str, Any]:
     """Ingest an emergency-call transcript."""
     return await _run("call", body.model_dump())
 
 
-@router.post("/sensor")
+@router.post("/sensor", dependencies=[Depends(require_roles("dispatcher"))])
 async def ingest_sensor(body: SensorReportBody) -> Dict[str, Any]:
     """Ingest a sensor breach reading."""
     return await _run("sensor", body.model_dump())
 
 
-@router.post("/field")
+@router.post("/field", dependencies=[Depends(require_roles("team", "dispatcher"))])
 async def ingest_field(body: FieldReportBody) -> Dict[str, Any]:
     """Ingest a field team report."""
     return await _run("field", body.model_dump())
 
 
-@router.post("/hospital")
+@router.post("/hospital", dependencies=[Depends(require_roles("hospital", "dispatcher"))])
 async def ingest_hospital(body: HospitalReportBody) -> Dict[str, Any]:
     """Ingest a hospital situation report."""
     return await _run("hospital", body.model_dump())
 
 
-@router.post("/department")
+@router.post("/department", dependencies=[Depends(require_roles("dispatcher"))])
 async def ingest_department(body: DepartmentReportBody) -> Dict[str, Any]:
     """Ingest a department / agency report."""
     return await _run("department", body.model_dump())
 
 
-@router.post("")
+@router.post("", dependencies=[Depends(require_roles("dispatcher"))])
 async def ingest_generic(body: GenericIngestBody) -> Dict[str, Any]:
     """Generic ingest endpoint (source + payload dict)."""
     return await _run(body.source, body.payload)

@@ -6,12 +6,13 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
 
+from app.core.roles import require_roles
 from app.services import simulator
 
-router = APIRouter(prefix="/sim", tags=["simulator"])
+router = APIRouter(prefix="/sim", tags=["simulator"], dependencies=[Depends(require_roles("dispatcher"))])
 
 
 class SensorBreachRequest(BaseModel):

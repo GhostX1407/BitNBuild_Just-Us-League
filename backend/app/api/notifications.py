@@ -10,11 +10,12 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.roles import require_roles
 from app.db.models import Notification
 from app.db.session import get_session
 from app.schemas.alert import NotificationOut
 
-router = APIRouter(tags=["notifications"])
+router = APIRouter(tags=["notifications"], dependencies=[Depends(require_roles("dispatcher", "team", "hospital"))])
 
 
 @router.get("/notifications", response_model=List[NotificationOut])

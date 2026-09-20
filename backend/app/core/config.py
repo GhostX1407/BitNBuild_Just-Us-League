@@ -1,16 +1,23 @@
 """ResQGrid — application configuration (pydantic-settings)."""
 from __future__ import annotations
 
+from pathlib import Path
 from typing import List, Union
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
+_ENV_FILE = _BACKEND_DIR / ".env"
+
 
 class Settings(BaseSettings):
     """All configurable settings; missing keys fall back to empty string → mock mode."""
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=(str(_ENV_FILE), ".env"),
+        extra="ignore",
+    )
 
     # Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./resq.db"
@@ -18,10 +25,15 @@ class Settings(BaseSettings):
     # LLM — Groq (primary)
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    GROQ_VISION_MODEL: str = "meta-llama/llama-4-scout-17b-16e-instruct"
 
     # LLM — Gemini (fallback)
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-2.0-flash"
+    GEMINI_VISION_MODEL: str = "gemini-2.0-flash"
+
+    # RBAC
+    DEFAULT_ROLE: str = "citizen"
 
     # Twilio
     TWILIO_ACCOUNT_SID: str = ""

@@ -13,12 +13,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import bus
+from app.core.roles import require_roles
 from app.db.models import Alert, AuditEvent, Incident
 from app.db.session import get_session
 from app.schemas.alert import AlertAckRequest, AlertEscalateRequest, AlertOut
 from app.services.sla import _serialize_alert
 
-router = APIRouter(tags=["alerts"])
+router = APIRouter(tags=["alerts"], dependencies=[Depends(require_roles("dispatcher"))])
 
 
 def _now_utc() -> datetime.datetime:

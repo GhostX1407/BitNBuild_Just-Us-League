@@ -12,6 +12,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.roles import require_roles
 from app.db.models import (
     Alert,
     Assignment,
@@ -52,7 +53,7 @@ def _now_utc() -> datetime.datetime:
 # Snapshot (Client Bootstrap)
 # ---------------------------------------------------------------------------
 
-@router.get("/snapshot", response_model=Snapshot)
+@router.get("/snapshot", response_model=Snapshot, dependencies=[Depends(require_roles("dispatcher", "team", "hospital"))])
 async def get_snapshot(session: AsyncSession = Depends(get_session)) -> Dict[str, Any]:
     """Return active incidents, units, facilities, sensors, alerts, notifications, and KPIs."""
     now = _now_utc()
@@ -209,7 +210,7 @@ async def get_snapshot(session: AsyncSession = Depends(get_session)) -> Dict[str
 # Units
 # ---------------------------------------------------------------------------
 
-@router.get("/units", response_model=List[UnitOut])
+@router.get("/units", response_model=List[UnitOut], dependencies=[Depends(require_roles("dispatcher", "team", "hospital"))])
 async def list_units(
     status: Optional[str] = None,
     kind: Optional[str] = None,
@@ -228,7 +229,7 @@ async def list_units(
     return [UnitOut.model_validate(u) for u in res.scalars().all()]
 
 
-@router.get("/units/{unit_id}", response_model=UnitOut)
+@router.get("/units/{unit_id}", response_model=UnitOut, dependencies=[Depends(require_roles("dispatcher", "team", "hospital"))])
 async def get_unit(unit_id: str, session: AsyncSession = Depends(get_session)) -> UnitOut:
     """Get single unit details."""
     unit = await session.get(Unit, unit_id)
@@ -237,7 +238,7 @@ async def get_unit(unit_id: str, session: AsyncSession = Depends(get_session)) -
     return UnitOut.model_validate(unit)
 
 
-@router.patch("/units/{unit_id}", response_model=UnitOut)
+@router.patch("/units/{unit_id}", response_model=UnitOut, dependencies=[Depends(require_roles("dispatcher"))])
 async def patch_unit(
     unit_id: str,
     patch: UnitPatch,
@@ -287,7 +288,7 @@ async def patch_unit(
 # Facilities
 # ---------------------------------------------------------------------------
 
-@router.get("/facilities", response_model=List[FacilityOut])
+@router.get("/facilities", response_model=List[FacilityOut], dependencies=[Depends(require_roles("dispatcher", "team", "hospital"))])
 async def list_facilities(
     kind: Optional[str] = None,
     session: AsyncSession = Depends(get_session),
@@ -300,7 +301,7 @@ async def list_facilities(
     return [FacilityOut.model_validate(f) for f in res.scalars().all()]
 
 
-@router.patch("/facilities/{facility_id}", response_model=FacilityOut)
+@router.patch("/facilities/{facility_id}", response_model=FacilityOut, dependencies=[Depends(require_roles("hospital", "dispatcher"))])
 async def patch_facility(
     facility_id: str,
     patch: FacilityPatch,
@@ -328,14 +329,14 @@ async def patch_facility(
 # Dispatch & Recommendations
 # ---------------------------------------------------------------------------
 
-@router.post("/incidents/{incident_id}/recommend", response_model=RecommendPlanOut)
+@router.post("/incidents/{incident_id}/recommend", response_model=RecommendPlanOut, dependencies=[Depends(require_roles("dispatcher"))])
 async def recommend_for_incident(incident_id: str) -> Dict[str, Any]:
     """Compute/refresh resource recommendation plan for an incident."""
     plan = await recommend.plan(incident_id)
     return plan
 
 
-@router.post("/incidents/{incident_id}/approve", response_model=List[AssignmentOut])
+@router.post("/incidents/{incident_id}/approve", response_model=List[AssignmentOut], dependencies=[Depends(require_roles("dispatcher"))])
 async def approve_incident_dispatch(
     incident_id: str,
     req: ApproveRequest,
@@ -349,7 +350,7 @@ async def approve_incident_dispatch(
     return approved
 
 
-@router.post("/assignments/{assignment_id}/accept", response_model=Optional[AssignmentOut])
+@router.post("/assignments/{assignment_id}/accept", response_model=Optional[AssignmentOut], dependencies=[Depends(require_roles("team", "dispatcher"))])
 async def accept_assignment(assignment_id: str) -> Any:
     """Field unit accepts assigned dispatch."""
     asgn = await dispatch.accept(assignment_id)
@@ -358,7 +359,7 @@ async def accept_assignment(assignment_id: str) -> Any:
     return asgn
 
 
-@router.post("/assignments/{assignment_id}/reject")
+@router.post("/assignments/{assignment_id}/reject", dependencies=[Depends(require_roles("team", "dispatcher"))])
 async def reject_assignment(
     assignment_id: str,
     reason: Optional[str] = Query(default=""),
@@ -368,7 +369,7 @@ async def reject_assignment(
     return {"status": "rejected", "message": "Assignment rejected, re-recommendation triggered"}
 
 
-@router.post("/assignments/{assignment_id}/status", response_model=Optional[AssignmentOut])
+@router.post("/assignments/{assignment_id}/status", response_model=Optional[AssignmentOut], dependencies=[Depends(require_roles("team", "dispatcher"))])
 async def update_assignment_status(
     assignment_id: str,
     req: AssignmentStatusRequest,

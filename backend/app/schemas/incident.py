@@ -41,6 +41,10 @@ class ReportOut(BaseModel):
     created_at: datetime
     incident_id: Optional[str] = None
     classification: Optional[Dict[str, Any]] = None
+    photo_url: Optional[str] = None
+    verification: Optional[Dict[str, Any]] = None
+    language: Optional[str] = None
+    translated_text: Optional[str] = None
 
 
 class AlertOut(BaseModel):
@@ -99,6 +103,8 @@ class IncidentOut(BaseModel):
     decision_log: List[Any]
     assignments: List[AssignmentOut]
     shortages: List[ShortageOut]
+    verification_status: str = "needs_verification"
+    review: Optional[Dict[str, Any]] = None
 
 
 class RelatedIncident(BaseModel):
@@ -125,6 +131,7 @@ class IncidentPatch(BaseModel):
     type: Optional[str] = None
     status: Optional[str] = None
     escalated: Optional[bool] = None
+    verified: Optional[bool] = None
 
 
 class MergeBody(BaseModel):

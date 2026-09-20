@@ -123,6 +123,10 @@ class Report(Base):
         String(36), nullable=True, index=True
     )
     classification: Mapped[Optional[Dict]] = mapped_column(JSONColumn, nullable=True)
+    photo_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    verification: Mapped[Optional[Dict]] = mapped_column(JSONColumn, nullable=True)
+    language: Mapped[Optional[str]] = mapped_column(String(16), nullable=True)
+    translated_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     __table_args__ = (
         Index("ix_reports_source_ext", "source", "external_id"),
@@ -170,6 +174,8 @@ class Incident(Base):
     # Contract additions
     is_historic: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
     region_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    verification_status: Mapped[str] = mapped_column(String(32), nullable=False, default="needs_verification")
+    review: Mapped[Optional[Dict]] = mapped_column(JSONColumn, nullable=True)
 
 
 # ---------------------------------------------------------------------------
@@ -219,6 +225,7 @@ class Facility(Base):
     beds_free: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     on_diversion: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     contact: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    meta: Mapped[Dict] = mapped_column(JSONColumn, nullable=False, default=dict)
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(UTCDateTime, nullable=True)
 
 
@@ -358,3 +365,51 @@ class AuditEvent(Base):
     entity: Mapped[str] = mapped_column(String(64), nullable=False)
     entity_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
     data: Mapped[Optional[Dict]] = mapped_column(JSONColumn, nullable=True)
+
+
+# ---------------------------------------------------------------------------
+# Broadcast
+# ---------------------------------------------------------------------------
+
+class Broadcast(Base):
+    """Public-safety broadcast message."""
+
+    __tablename__ = "broadcasts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    title: Mapped[str] = mapped_column(String(256), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    body_hi: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    body_gu: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    severity: Mapped[str] = mapped_column(String(16), nullable=False, default="info")  # info|warning|critical
+    area: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_by: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        UTCDateTime, nullable=False, default=_now_utc, index=True
+    )
+    expires_at: Mapped[Optional[datetime.datetime]] = mapped_column(UTCDateTime, nullable=True)
+
+
+# ---------------------------------------------------------------------------
+# MutualAid
+# ---------------------------------------------------------------------------
+
+class MutualAid(Base):
+    """Inter-agency mutual aid request."""
+
+    __tablename__ = "mutual_aid"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    incident_id: Mapped[Optional[str]] = mapped_column(String(36), nullable=True, index=True)
+    agency: Mapped[str] = mapped_column(String(128), nullable=False)
+    resource_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    qty: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="requested")  # requested|approved|declined|arrived
+    requested_by: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    decided_by: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    note: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        UTCDateTime, nullable=False, default=_now_utc, index=True
+    )
+    decided_at: Mapped[Optional[datetime.datetime]] = mapped_column(UTCDateTime, nullable=True)

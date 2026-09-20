@@ -224,6 +224,8 @@ async def serialize_incident(session, incident: Incident) -> Dict[str, Any]:
         "decision_log": incident.decision_log or [],
         "assignments": asgn_out,
         "shortages": shortage_out,
+        "verification_status": getattr(incident, "verification_status", "needs_verification") or "needs_verification",
+        "review": getattr(incident, "review", None),
     }
 
 

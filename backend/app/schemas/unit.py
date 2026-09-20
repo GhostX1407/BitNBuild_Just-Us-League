@@ -76,6 +76,7 @@ class FacilityOut(BaseModel):
     beds_free: int = 0
     on_diversion: bool = False
     contact: Optional[str] = None
+    meta: Dict[str, Any] = Field(default_factory=dict)
 
     model_config = ConfigDict(from_attributes=True)
 
