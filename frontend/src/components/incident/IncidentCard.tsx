@@ -70,8 +70,10 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({
       tilt={true}
       elevation={isSelected ? 'raised' : 'flat'}
       className={cn(
-        'p-3.5 cursor-pointer transition-all mb-2.5',
-        isSelected && 'border-slate-900 ring-1 ring-slate-900/10 shadow-md'
+        'p-3.5 cursor-pointer transition-all mb-3 rounded-2xl',
+        isSelected
+          ? 'border-slate-900 ring-2 ring-slate-900/10 shadow-tile-hover -translate-y-0.5'
+          : 'hover:border-slate-300 hover:shadow-tile'
       )}
     >
       {/* Header Row */}

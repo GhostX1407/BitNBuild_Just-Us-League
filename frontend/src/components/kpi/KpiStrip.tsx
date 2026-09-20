@@ -85,9 +85,12 @@ export const KpiStrip: React.FC = () => {
   ];
 
   return (
-    <div className="h-11 bg-white border-b border-slate-200/80 px-5 flex items-center gap-7 overflow-x-auto select-none no-scrollbar shrink-0">
+    <div className="h-11 bg-slate-50/90 border-b border-slate-200/70 px-4 sm:px-6 flex items-center gap-2 overflow-x-auto select-none no-scrollbar shrink-0">
       {metrics.map((m) => (
-        <div key={m.id} className="flex items-center gap-2 shrink-0">
+        <div
+          key={m.id}
+          className="flex items-center gap-2 px-3 py-1 bg-white border border-slate-200/80 rounded-full shadow-[0_1px_4px_rgba(15,23,42,0.04),inset_0_1px_0_0_rgba(255,255,255,1)] hover:border-slate-300 transition-all shrink-0"
+        >
           <span className="shrink-0">{m.icon}</span>
           <div className="flex items-baseline gap-1.5 text-xs">
             <span className="text-slate-500 font-medium">
@@ -97,12 +100,11 @@ export const KpiStrip: React.FC = () => {
               {m.value}
             </span>
             {m.badge && (
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 border border-rose-200">
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold">
                 {m.badge}
               </span>
             )}
           </div>
-          <span className="w-px h-3.5 bg-slate-200 ml-3 last:hidden" />
         </div>
       ))}
     </div>

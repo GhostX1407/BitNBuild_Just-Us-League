@@ -55,7 +55,7 @@ export const Card: React.FC<CardProps> = ({
     teal: 'border-emerald-300 ring-2 ring-emerald-100',
   }[glow];
 
-  const elevationBg = elevation === 'raised' ? 'bg-slate-50/70' : 'bg-white';
+  const elevationBg = elevation === 'raised' ? 'bg-slate-50/80' : 'bg-white';
 
   return (
     <div
@@ -65,19 +65,21 @@ export const Card: React.FC<CardProps> = ({
       onMouseLeave={handleMouseLeave}
       style={{
         transform: isHovered && tilt
-          ? `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`
-          : 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-        transition: isHovered ? 'transform 0.08s ease-out' : 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          ? `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2.5px) scale3d(1.008, 1.008, 1.008)`
+          : 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px) scale3d(1, 1, 1)',
+        transition: isHovered ? 'transform 0.08s ease-out' : 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
       className={cn(
-        'relative rounded-2xl border border-slate-200/90 shadow-tile transition-all duration-200',
+        'relative rounded-2xl border border-slate-200/90 shadow-tile transition-all duration-300 overflow-hidden',
         elevationBg,
-        isHovered && 'shadow-tile-hover border-slate-300 -translate-y-0.5',
+        isHovered && 'shadow-tile-hover border-slate-300',
         glowStyles,
         className
       )}
       {...props}
     >
+      {/* 3D Specular Highlight Lip (Apple hardware/UI effect) */}
+      <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent rounded-t-2xl pointer-events-none z-10" />
       {children}
     </div>
   );

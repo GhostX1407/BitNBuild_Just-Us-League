@@ -31,7 +31,7 @@ export const ConsolePage: React.FC = () => {
   const selectedIncident = incidents.find((i) => i.id === selectedIncidentId) || null;
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-slate-50 relative">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 relative">
       {/* Alert Banner */}
       <AlertBanner />
 

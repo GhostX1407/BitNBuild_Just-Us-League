@@ -111,8 +111,8 @@ export const AlertsPanel: React.FC = () => {
               key={a.id}
               onClick={() => a.incident_id && selectIncident(a.incident_id)}
               className={cn(
-                'p-3.5 bg-white border border-slate-200/80 rounded-xl hover:border-slate-300 transition-all cursor-pointer space-y-2 shadow-sm',
-                a.kind === 'critical' && 'border-rose-200 bg-rose-50/20'
+                'p-3.5 bg-white border border-slate-200/90 rounded-2xl hover:border-slate-300 transition-all cursor-pointer space-y-2 shadow-tile hover:shadow-tile-hover hover:-translate-y-0.5',
+                a.kind === 'critical' && 'border-rose-300 bg-rose-50/20'
               )}
             >
               <div className="flex items-center justify-between">

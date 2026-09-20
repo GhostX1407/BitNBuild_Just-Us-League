@@ -8,7 +8,6 @@ import {
   Sliders,
   Bell,
   ChevronDown,
-  User,
   Shield,
   Radio,
   Building2,
@@ -43,7 +42,7 @@ export const AppHeader: React.FC = () => {
   }, []);
 
   const navItems = [
-    { to: '/console', label: 'Command Console', icon: <Activity className="w-3.5 h-3.5" /> },
+    { to: '/console', label: 'Console', icon: <Activity className="w-3.5 h-3.5" /> },
     { to: '/analytics', label: 'Analytics', icon: <BarChart3 className="w-3.5 h-3.5" /> },
     { to: '/simulator', label: 'Simulator', icon: <Sliders className="w-3.5 h-3.5" /> },
   ];
@@ -64,36 +63,46 @@ export const AppHeader: React.FC = () => {
   };
 
   return (
-    <header className="h-14 bg-white border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between select-none z-30 shrink-0 shadow-[0_1px_3px_0_rgba(15,23,42,0.03)]">
-      {/* Brand & Clean Streamlined Navigation */}
-      <div className="flex items-center gap-6 md:gap-8">
-        <NavLink to="/console" className="flex items-center gap-2.5 group">
-          <div className="w-7 h-7 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-            <ShieldAlert className="w-4 h-4" />
+    <div className="w-full px-3 sm:px-6 pt-2 pb-2 bg-slate-50 flex items-center justify-center shrink-0 z-30 select-none">
+      {/* Apple Mac-style Floating 3D Curved Navigation Bar */}
+      <header className="w-full max-w-6xl h-12.5 bg-white/90 backdrop-blur-xl border border-slate-200/90 rounded-full px-3 sm:px-4 flex items-center justify-between shadow-[0_8px_30px_-4px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.03),inset_0_1px_0_0_rgba(255,255,255,1)]">
+        {/* Left: macOS Traffic Dots & Brand */}
+        <div className="flex items-center gap-3">
+          {/* macOS Accent Dots */}
+          <div className="hidden lg:flex items-center gap-1.5 pl-1 pr-2 border-r border-slate-200/70">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] border border-[#E0443E]/40" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] border border-[#DEA123]/40" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] border border-[#1AAB29]/40" />
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-heading font-bold text-sm tracking-tight text-slate-900">
-              ResQGrid
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
-              Vadodara
-            </span>
-          </div>
-        </NavLink>
 
-        {/* Minimal Non-Redundant Navigation Tabs */}
-        <nav className="hidden md:flex items-center gap-1.5">
+          <NavLink to="/console" className="flex items-center gap-2 group">
+            <div className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <ShieldAlert className="w-4 h-4" />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-heading font-bold text-sm tracking-tight text-slate-900">
+                ResQGrid
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-semibold hidden md:inline border border-slate-200/60">
+                Vadodara
+              </span>
+            </div>
+          </NavLink>
+        </div>
+
+        {/* Center: Apple-style 3D Highlight Segmented Pill Tabs */}
+        <nav className="flex items-center bg-slate-100/80 p-1 rounded-full border border-slate-200/60 shadow-inner">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-xl transition-all font-medium select-none',
+                  'flex items-center gap-1.5 px-3.5 py-1 text-xs rounded-full transition-all duration-200 select-none',
                   isActive
-                    ? 'bg-slate-900 text-white shadow-sm font-semibold'
-                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
+                    ? 'bg-white text-slate-950 font-bold shadow-[0_2px_8px_rgba(15,23,42,0.08),0_1px_2px_rgba(15,23,42,0.04)] border border-slate-200/90 scale-[1.02]'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-white/50 font-medium'
                 )
               }
             >
@@ -102,67 +111,64 @@ export const AppHeader: React.FC = () => {
             </NavLink>
           ))}
         </nav>
-      </div>
 
-      {/* Right Controls: Quick Report + Clock + Notifications + Profile Auth */}
-      <div className="flex items-center gap-2.5 sm:gap-3">
-        {/* Quick Report Emergency Button */}
-        <NavLink
-          to="/report"
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all text-xs font-semibold shadow-sm active:translate-y-0.5"
-        >
-          <FilePlus2 className="w-3.5 h-3.5 text-blue-600" />
-          <span>+ Report Emergency</span>
-        </NavLink>
+        {/* Right: Mac-style Action Buttons + Profile */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Quick Report Emergency Button */}
+          <NavLink
+            to="/report"
+            className="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm hover:shadow active:scale-[0.98] transition-all"
+          >
+            <FilePlus2 className="w-3.5 h-3.5" />
+            <span>+ Report</span>
+          </NavLink>
 
-        {/* Live IST Clock */}
-        <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-mono text-slate-600">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          <span>{timeStr} IST</span>
+          {/* Clock */}
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-100/70 border border-slate-200/60 rounded-full text-xs font-mono text-slate-600">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span>{timeStr}</span>
+          </div>
+
+          {/* Notification Bell */}
+          <button
+            onClick={() => setNotificationOpen(!isNotificationOpen)}
+            className={cn(
+              'relative p-1.5 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95',
+              isNotificationOpen
+                ? 'bg-slate-900 text-white border-slate-900'
+                : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+            )}
+            title="Outbox & Notifications"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose-500 text-[9px] font-mono font-bold text-white flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Apple User Profile Pill */}
+          <button
+            type="button"
+            onClick={() => setAuthModalOpen(true)}
+            className="flex items-center gap-2 pl-1 pr-2.5 py-0.5 rounded-full bg-white border border-slate-200/90 hover:border-slate-300 shadow-sm hover:shadow transition-all cursor-pointer active:scale-95 group"
+            title="Switch operator persona"
+          >
+            <div className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs">
+              {getProfileIcon(currentUser.role)}
+            </div>
+
+            <div className="text-left hidden sm:block">
+              <span className="text-xs font-semibold text-slate-800 leading-none block">
+                {currentUser.name.split(' ')[0]}
+              </span>
+            </div>
+
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-colors" />
+          </button>
         </div>
-
-        {/* Notification Bell */}
-        <button
-          onClick={() => setNotificationOpen(!isNotificationOpen)}
-          className={cn(
-            'relative p-2 rounded-xl border transition-all cursor-pointer shadow-sm active:translate-y-0.5',
-            isNotificationOpen
-              ? 'bg-slate-900 text-white border-slate-900'
-              : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-          )}
-          title="Outbox & Notification Drawer"
-        >
-          <Bell className="w-4 h-4" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-[10px] font-mono font-bold text-white flex items-center justify-center">
-              {unreadCount}
-            </span>
-          )}
-        </button>
-
-        {/* User Profile & Persona Switcher Gateway */}
-        <button
-          type="button"
-          onClick={() => setAuthModalOpen(true)}
-          className="flex items-center gap-2.5 pl-1.5 pr-2.5 py-1 rounded-xl bg-white border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow transition-all cursor-pointer active:translate-y-0.5 group"
-          title="Click to switch profile or operator persona"
-        >
-          <div className="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-700">
-            {getProfileIcon(currentUser.role)}
-          </div>
-
-          <div className="text-left hidden sm:block">
-            <div className="text-xs font-semibold text-slate-800 leading-tight">
-              {currentUser.name}
-            </div>
-            <div className="text-[10px] text-slate-400 font-medium">
-              {currentUser.roleTitle}
-            </div>
-          </div>
-
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-colors" />
-        </button>
-      </div>
-    </header>
+      </header>
+    </div>
   );
 };
