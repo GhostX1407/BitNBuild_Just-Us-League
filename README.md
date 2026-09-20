@@ -24,6 +24,7 @@ ResQGrid is an intelligent emergency response and resource coordination platform
 - [Real-Time Processing & Event Bus](#real-time-processing--event-bus)
 - [Alerts, SLA Monitoring & Escalation](#alerts-sla-monitoring--escalation)
 - [Analytics & Incident Intelligence](#analytics--incident-intelligence)
+- [v2 Expansion — RBAC, Weather Intelligence & Multi-Agency Coordination](#v2-expansion--rbac-weather-intelligence--multi-agency-coordination)
 - [Research & Conceptual Foundation](#research--conceptual-foundation)
 - [AI-Assisted Development Workflow](#ai-assisted-development-workflow)
 - [Team & Responsibilities](#team--responsibilities)
@@ -160,6 +161,15 @@ The system ingests raw messages, validates them against standardized schemas, re
 - **Live Unit Tracking**: Simulated unit movement showing dispatched vehicles traveling toward incident coordinates in real time.
 - **Incident Intelligence & Heatmaps**: Historical analytics interface rendering incident density heatmaps, category distribution charts, response time trends, and resource utilization metrics.
 - **Scenario Simulator**: Built-in demonstration engine supporting scripted simulations (e.g., Vishwamitri river flood, GIDC chemical fire, NH48 multi-vehicle collision) with adjustable time scaling.
+
+### Role-Based Access Control & Multi-Portal Access
+- **Login & Role Routing**: A dedicated `/login` portal authenticates users into one of three operational roles — **Dispatcher**, **Field Team**, and **Hospital** — each redirected to its own authorized workspace via a `RoleGuard` route wrapper.
+- **Server-Side RBAC Enforcement**: The backend mirrors this on every sensitive endpoint via an `X-Role` header dependency (`core/roles.py`), rejecting unauthorized requests with `403 Forbidden` regardless of what the frontend allows.
+- **Graceful Access Redirection**: Attempting to reach an unauthorized workspace redirects the user to their own portal with a toast notification, rather than a hard error.
+
+### Live Weather Intelligence
+- **Open-Meteo Integration (Zero-Key)**: A `WeatherWidget` component pulls current conditions and a 24-hour forecast for Vadodara (temperature, humidity, wind speed, precipitation) from the free Open-Meteo API — no API key required.
+- **Automated Risk Hinting**: Weather codes are translated into a `none / low / moderate / high` risk hint (e.g., thunderstorm codes flag "high" risk) to give dispatchers early warning of weather-driven incident surges such as flash flooding.
 
 ---
 
@@ -361,6 +371,7 @@ flowchart TB
         E2["Twilio REST API (SMS)"]
         E3["SMTP Client (Email)"]
         E4["OpenStreetMap Tiles"]
+        E5["Open-Meteo API (Weather, v2)"]
     end
 
     Client <-->|REST APIs & WebSockets| Server
@@ -387,6 +398,10 @@ flowchart TB
 | **Offline Machine Learning**| scikit-learn | Offline TF-IDF vectorization and Logistic Regression classification |
 | **Real-Time Communication**| WebSockets (`/ws`) | Bidirectional, low-latency state synchronization between backend and frontend |
 | **External Messaging** | Twilio API & SMTP | Automated emergency SMS alerts and supervisor email escalation dispatches |
+| **Weather Intelligence (v2)** | Open-Meteo API | Zero-key current conditions and 24h forecast with automated risk hinting |
+| **Access Control (v2)** | Custom RBAC (`X-Role` header) | Role-based endpoint protection for Dispatcher, Field Team, and Hospital roles |
+| **Page Transitions** | Framer Motion | Animated route transitions across the multi-role frontend (Console, Login, Ops, etc.) |
+| **Client-Side Routing** | React Router DOM | Role-guarded route definitions across all frontend workspaces |
 
 ---
 
@@ -435,6 +450,14 @@ The ResQGrid frontend delivers a modern command console built for speed, clarity
    - Real-time dashboard showing emergency department bed availability, ICU capacity, and blood bank reserves across major medical centers.
 6. **Incident Scenario Simulator (`/simulator`)**:
    - Interactive control panel allowing evaluators to inject realistic emergency scenarios (Floods, Chemical Fires, Highway Collisions) with adjustable time scaling (1x to 10x speed).
+7. **Login & Role Portal (`/login`)**:
+   - Role-selection entry point authenticating users as Dispatcher, Field Team, or Hospital staff and routing each into their authorized workspace.
+8. **Broadcast Center (`/broadcast`)**:
+   - Dispatcher tool for issuing public-safety broadcast alerts with severity levels (info/warning/critical), area targeting, expiry timers, and multi-language (Hindi/Gujarati) message bodies.
+9. **Mutual Aid Requests (`/mutual-aid`)**:
+   - Cross-agency coordination view for requesting, tracking, and approving/declining external resource assistance (e.g., NDRF, neighboring municipality units) tied to a specific incident.
+10. **Ops Center (`/ops`)**:
+    - Consolidated operations view surfacing the full audit trail, shift handover notes, and post-incident review submissions for accountability and continuity between shifts.
 
 ---
 
@@ -452,11 +475,17 @@ backend/app/
 │   ├── analytics.py      # Aggregated metrics, heatmaps, and trend data
 │   ├── hospitals.py      # Hospital capacity and bed availability endpoints
 │   ├── simulator.py      # Scripted scenario injection and time scale controls
+│   ├── broadcast.py      # v2: Public-safety broadcast alerts (multi-language)
+│   ├── mutual_aid.py     # v2: Cross-agency mutual aid request workflow
+│   ├── ops.py            # v2: Audit trail, shift handover, post-incident review
+│   ├── v2.py             # v2: Weather feed, incident replay, cascading-risk,
+│   │                     #     report verification, evacuation routing, reallocation
 │   └── websocket.py      # WebSocket connection manager and broadcast loop
 ├── core/                 # Core engine components
 │   ├── config.py         # Environment variables and settings
 │   ├── event_bus.py      # Internal asynchronous pub/sub event bus
 │   ├── llm_client.py     # Groq, Gemini, and circuit breaker implementation
+│   ├── roles.py          # v2: RBAC dependency (X-Role header enforcement)
 │   └── gazetteer.py      # Vadodara spatial gazetteer and geocoding index
 ├── db/                   # Database models and session management
 │   ├── models.py         # 11 SQLAlchemy relational models
@@ -476,7 +505,7 @@ backend/app/
 
 ## Database & Data Models
 
-The persistence layer is implemented with SQLAlchemy 2.0 async models over an asynchronous relational database, comprising 11 interconnected entities:
+The persistence layer is implemented with SQLAlchemy 2.0 async models over an asynchronous relational database, comprising 11 interconnected entities (plus two v2 additions — `Broadcast` and `MutualAid` — described in [v2 Expansion](#v2-expansion--rbac-weather-intelligence--multi-agency-coordination), bringing the current total to 12 tables):
 
 ```mermaid
 erDiagram
@@ -632,6 +661,56 @@ The Analytics module converts historical and real-time operational data into str
 
 ---
 
+## v2 Expansion — RBAC, Weather Intelligence & Multi-Agency Coordination
+
+Following the initial build, the platform was extended with a second wave of operational modules — collectively referred to internally as **"v2"** — that add role security, environmental awareness, and cross-agency coordination on top of the core PS-9 pipeline. All v2 routes are auto-discovered and mounted under `/api` alongside the original endpoints, and every module is fully additive: no existing endpoint, model, or page was altered.
+
+```mermaid
+flowchart LR
+    subgraph V2["v2 Modules"]
+        R1["RBAC & Login<br/>(roles.py, /login)"]
+        R2["Weather Intelligence<br/>(Open-Meteo, risk hints)"]
+        R3["Broadcast Center<br/>(Public alerts, multi-language)"]
+        R4["Mutual Aid<br/>(Cross-agency requests)"]
+        R5["Ops Center<br/>(Audit, Handover, Review)"]
+        R6["Cascading Risk & Replay<br/>(Incident timeline, risk propagation)"]
+        R7["Evacuation Routing<br/>(Nearest shelter lookup)"]
+        R8["Unit Reallocation<br/>(Cross-incident re-tasking)"]
+    end
+    Core["Core PS-9 Pipeline"] --> V2
+```
+
+### Role-Based Access Control (`core/roles.py`)
+- **`require_roles()` Dependency**: A reusable FastAPI dependency reads the `X-Role` request header (defaulting to the configured `DEFAULT_ROLE` if absent) and enforces access at the endpoint level.
+- **Three Operational Roles**: `dispatcher`, `team`, and `hospital`, plus an `admin` role that bypasses all checks — mirrored on the frontend by the `RoleGuard` component and a new `/login` portal.
+- **Fail-Closed Design**: Any request from a role not present in an endpoint's allow-list is rejected with `403 Forbidden` and a descriptive error, protecting the new Broadcast, Mutual Aid, and Ops endpoints (all gated to `dispatcher` by default) even if the frontend is bypassed.
+
+### Live Weather Intelligence (`GET /api/weather`)
+- Fetches current conditions and a 24-hour forecast from **Open-Meteo** (free, zero-key), covering temperature, humidity, wind speed, and precipitation for any lat/lng (defaults to Vadodara).
+- Converts WMO weather codes into a simplified `none / low / moderate / high` risk hint so the dispatcher console can flag rising flood/storm risk before reports start arriving.
+
+### Public-Safety Broadcast Center (`/api/broadcasts`)
+- Dispatchers can publish area-targeted public alerts with a **severity tier** (`info` / `warning` / `critical`), an optional **expiry window**, and **multi-language bodies** (`body_hi`, `body_gu`) for Hindi and Gujarati audiences alongside the English text.
+- Broadcasts can be deactivated on demand (`PATCH /broadcasts/{id}/deactivate`) once the underlying situation is resolved.
+
+### Mutual Aid Requests (`/api/mutual-aid`)
+- Formalizes requesting external assistance (e.g., NDRF, a neighboring municipality's units) against a specific incident: agency, resource type, quantity, and requester are captured on creation.
+- Requests move through a decision workflow (`PATCH /mutual-aid/{id}/decide`) to `approved`, `declined`, or `arrived`, with the deciding dispatcher and any notes recorded for the audit trail.
+
+### Ops Center — Audit, Handover & Post-Incident Review (`/api` — `ops.py`)
+- **`GET /audit`**: Paginated, filterable view (by entity, entity ID, or action) over the existing immutable `AuditEvent` log, exposed as a first-class Ops Center feature rather than a raw table dump.
+- **`POST /handover`**: Structured shift-handover notes so an incoming dispatcher can pick up situational context instantly at shift change.
+- **`POST /incidents/{id}/review`**: Post-incident review submissions capturing what went well, what didn't, and follow-up actions once an incident is closed.
+
+### Additional Coordination Endpoints (`v2.py`)
+- **Incident Replay (`GET /incidents/{id}/replay`)**: Reconstructs the full chronological timeline of an incident — reports, classification changes, assignments, and alerts — for after-action review and training.
+- **Cascading Risk Analysis (`POST /incidents/{id}/cascade`)**: Evaluates whether an active incident poses secondary risk to nearby infrastructure or populations (e.g., a gas leak threatening an adjacent facility), surfacing a proactive risk assessment before it materializes.
+- **Report Verification (`POST /reports/{id}/verify`)**: Lets a dispatcher mark an individual citizen/field report as verified, strengthening the confidence signal used elsewhere in the pipeline.
+- **Nearest Shelters / Evacuation Routing (`GET /evacuation/shelters`)**: Haversine-based lookup of the closest shelter facilities to a given coordinate, supporting evacuation planning during floods and large-scale incidents.
+- **Unit Reallocation (`POST /reallocate`)**: Allows a dispatcher to re-task a unit from one active incident to a higher-priority one mid-response, with the change captured in the audit log.
+
+---
+
 ## Research & Conceptual Foundation
 
 *Research, Problem Ideation, and Project Orchestration led by **Yash Jadhav**.*
@@ -776,7 +855,8 @@ BitNBuild_Just-Us-League/
 ├── frontend/                     # React + TypeScript + Vite application
 │   ├── src/                      # Frontend source code
 │   │   ├── components/           # UI primitives, map overlays, shared components
-│   │   ├── pages/                # Console, Analytics, Report, Track, Simulator
+│   │   ├── pages/                # Console, Analytics, Report, Track, Simulator,
+│   │   │                         # Login, Hospital, Broadcast, MutualAid, Ops
 │   │   ├── services/             # API client, WebSocket client, mock data
 │   │   └── store/                # Zustand state stores (incidents, units, alerts)
 │   ├── package.json              # Node.js dependencies
