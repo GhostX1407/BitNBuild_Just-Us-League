@@ -2,17 +2,43 @@
 import pytest
 import datetime
 from uuid import uuid4
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+import sys
+import importlib
 from unittest.mock import patch
-
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.pool import StaticPool
 from app.db.models import Base, Incident, Unit, Facility, Assignment, Shortage
+
+# Ensure real modules in sys.modules
+def _restore_modules():
+    for mod_name in ("app.core.events", "app.services.recommend", "app.services.dispatch", "app.services.sla", "app.services.notify"):
+        if mod_name in sys.modules:
+            mod = sys.modules[mod_name]
+            if hasattr(mod, "_mock_return_value") or type(mod).__name__ == "MagicMock":
+                del sys.modules[mod_name]
+                importlib.import_module(mod_name)
+
+_restore_modules()
+
 from app.services import recommend, dispatch
+
+
+@pytest.fixture(autouse=True)
+def ensure_real_modules_before_each_test():
+    _restore_modules()
+    yield
+    _restore_modules()
 
 
 @pytest.fixture
 async def test_session():
     """Create in-memory SQLite database and yield an async session."""
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///:memory:",
+        echo=False,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
